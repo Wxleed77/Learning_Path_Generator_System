@@ -24,6 +24,20 @@ def _persist_task_with_resources(db, weekly_plan_id, type_, title, description, 
     return task
 
 
+def _build_task_out(db, task, status_by_task=None):
+    resources = db.query(models.Resource).filter(models.Resource.task_id == task.id).all()
+    status = (status_by_task or {}).get(task.id, "not_started")
+    return schemas.TaskOut(
+        id=task.id,
+        type=task.type,
+        title=task.title,
+        description=task.description,
+        difficulty=task.difficulty,
+        status=status,
+        resources=[schemas.ResourceOut(url=r.url, resource_type=r.resource_type) for r in resources],
+    )
+
+
 @router.post("/generate", response_model=schemas.RoadmapOut, status_code=201)
 def generate_roadmap(
     payload: schemas.RoadmapGenerateRequest,
@@ -107,7 +121,7 @@ def generate_roadmap(
                 weekNumber=wp.week_number,
                 theme=wp.theme,
                 estimatedHours=wp.estimated_hours,
-                tasks=[schemas.TaskOut.model_validate(t) for t in tasks],
+                tasks=[_build_task_out(db, t) for t in tasks],
             )
             for wp, tasks in week_rows
         ],
@@ -143,13 +157,8 @@ def get_weekly_plan(
     ).all()
     status_by_task = {p.task_id: p.status for p in progress_rows}
 
-    def to_task_out(t):
-        out = schemas.TaskOut.model_validate(t)
-        out.status = status_by_task.get(t.id, "not_started")
-        return out
-
     return {
         "week": wp.week_number,
         "theme": wp.theme,
-        "tasks": [to_task_out(t) for t in tasks],
+        "tasks": [_build_task_out(db, t, status_by_task) for t in tasks],
     }

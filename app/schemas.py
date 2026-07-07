@@ -42,9 +42,8 @@ class RoadmapGenerateRequest(BaseModel):
 
 
 class ResourceOut(BaseModel):
-    title: str
-    type: str
     url: str
+    resource_type: str
 
     class Config:
         from_attributes = True
@@ -57,6 +56,7 @@ class TaskOut(BaseModel):
     description: str | None = None
     difficulty: str | None = None
     status: str = "not_started"
+    resources: list[ResourceOut] = []
 
     class Config:
         from_attributes = True
