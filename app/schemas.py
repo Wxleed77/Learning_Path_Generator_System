@@ -1,5 +1,6 @@
 from pydantic import BaseModel, EmailStr, constr, conint
 from typing import Literal
+from datetime import datetime
 import uuid
 
 
@@ -50,10 +51,12 @@ class ResourceOut(BaseModel):
 
 
 class TaskOut(BaseModel):
+    id: uuid.UUID
     type: str
     title: str
     description: str | None = None
     difficulty: str | None = None
+    status: str = "not_started"
 
     class Config:
         from_attributes = True
@@ -71,3 +74,13 @@ class RoadmapOut(BaseModel):
     versionId: uuid.UUID
     totalWeeks: int
     weeks: list[WeekOut]
+
+
+class ProgressUpdate(BaseModel):
+    status: Literal["not_started", "in_progress", "completed"]
+
+
+class ProgressOut(BaseModel):
+    taskId: uuid.UUID
+    status: str
+    updatedAt: datetime | None = None

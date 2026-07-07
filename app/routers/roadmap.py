@@ -2,10 +2,26 @@ from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 from .. import models, schemas
 from ..database import get_db
-from ..roadmap_stub import generate_stub_roadmap
+from ..llm_client import generate_roadmap_via_llm
 from .users import get_current_user
 
 router = APIRouter(prefix="/api/roadmap", tags=["roadmap"])
+
+
+def _persist_task_with_resources(db, weekly_plan_id, type_, title, description, difficulty, order_index, resources=None):
+    task = models.Task(
+        weekly_plan_id=weekly_plan_id,
+        type=type_,
+        title=title,
+        description=description,
+        difficulty=difficulty,
+        order_index=order_index,
+    )
+    db.add(task)
+    db.flush()
+    for r in resources or []:
+        db.add(models.Resource(task_id=task.id, url=r["url"], resource_type=r["type"], source="generated"))
+    return task
 
 
 @router.post("/generate", response_model=schemas.RoadmapOut, status_code=201)
@@ -14,7 +30,6 @@ def generate_roadmap(
     db: Session = Depends(get_db),
     current_user: models.User = Depends(get_current_user),
 ):
-    # 1. Persist the goal
     goal = models.LearningGoal(
         user_id=current_user.id,
         title=payload.goalTitle,
@@ -22,28 +37,28 @@ def generate_roadmap(
         hours_per_week=payload.hoursPerWeek,
     )
     db.add(goal)
-    db.flush()  # get goal.id without committing yet
+    db.flush()
 
-    # 2. Create the plan (no version yet)
     plan = models.LearningPlan(goal_id=goal.id, status="active")
     db.add(plan)
     db.flush()
 
-    # 3. Stub-generate the roadmap content (Phase 3 swaps this for a real LLM call)
-    roadmap = generate_stub_roadmap(payload.goalTitle, payload.skillLevel, payload.hoursPerWeek)
+    try:
+        roadmap = generate_roadmap_via_llm(payload.goalTitle, payload.skillLevel, payload.hoursPerWeek)
+    except RuntimeError as e:
+        db.rollback()
+        raise HTTPException(status_code=502, detail=str(e))
 
     version = models.RoadmapVersion(
         plan_id=plan.id,
         version_number=1,
-        raw_llm_output=None,  # nothing to audit yet — stub, not a real model call
+        raw_llm_output=roadmap,
         reason_for_regeneration=None,
     )
     db.add(version)
     db.flush()
-
     plan.current_version_id = version.id
 
-    # 4. Persist weeks + tasks
     week_rows = []
     for week in roadmap["weeks"]:
         wp = models.WeeklyPlan(
@@ -55,20 +70,31 @@ def generate_roadmap(
         db.add(wp)
         db.flush()
 
-        task_rows = []
-        for idx, task in enumerate(week["tasks"]):
-            t = models.Task(
-                weekly_plan_id=wp.id,
-                type=task["type"],
-                title=task["title"],
-                description=task["description"],
-                difficulty=task["difficulty"],
-                order_index=idx,
-            )
-            db.add(t)
-            task_rows.append(t)
+        tasks = []
+        idx = 0
+        for i, topic in enumerate(week["topics"]):
+            res = week["resources"] if i == 0 else []
+            tasks.append(_persist_task_with_resources(
+                db, wp.id, "topic", topic["title"], topic["description"], week["difficulty"], idx, res
+            ))
+            idx += 1
+        for project in week["projects"]:
+            tasks.append(_persist_task_with_resources(
+                db, wp.id, "project", project["title"], project["description"], project["difficulty"], idx
+            ))
+            idx += 1
+        q = week["quiz"]
+        tasks.append(_persist_task_with_resources(
+            db, wp.id, "quiz", f"Week {week['weekNumber']} Quiz",
+            f"{q['questionCount']} questions covering: {', '.join(q['topicsCovered'])}. Passing score: {q['passingScore']}%",
+            week["difficulty"], idx
+        ))
+        idx += 1
+        tasks.append(_persist_task_with_resources(
+            db, wp.id, "milestone", "Milestone", week["milestone"], week["difficulty"], idx
+        ))
 
-        week_rows.append((wp, task_rows))
+        week_rows.append((wp, tasks))
 
     db.commit()
 
@@ -111,9 +137,19 @@ def get_weekly_plan(
         raise HTTPException(status_code=404, detail="Week not found")
 
     tasks = db.query(models.Task).filter(models.Task.weekly_plan_id == wp.id).order_by(models.Task.order_index).all()
+    task_ids = [t.id for t in tasks]
+    progress_rows = db.query(models.Progress).filter(
+        models.Progress.task_id.in_(task_ids), models.Progress.user_id == current_user.id
+    ).all()
+    status_by_task = {p.task_id: p.status for p in progress_rows}
+
+    def to_task_out(t):
+        out = schemas.TaskOut.model_validate(t)
+        out.status = status_by_task.get(t.id, "not_started")
+        return out
 
     return {
         "week": wp.week_number,
         "theme": wp.theme,
-        "tasks": [schemas.TaskOut.model_validate(t) for t in tasks],
+        "tasks": [to_task_out(t) for t in tasks],
     }

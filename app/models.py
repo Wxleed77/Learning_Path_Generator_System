@@ -80,6 +80,16 @@ class Resource(Base):
     source = Column(String, default="generated")  # generated vs curated
 
 
+class Progress(Base):
+    __tablename__ = "progress"
+
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    user_id = Column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=False)
+    task_id = Column(UUID(as_uuid=True), ForeignKey("tasks.id"), nullable=False)
+    status = Column(String, default="not_started")  # not_started/in_progress/completed
+    completed_at = Column(DateTime, nullable=True)
+
+
 class RefreshToken(Base):
     __tablename__ = "refresh_tokens"
 
