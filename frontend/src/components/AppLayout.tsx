@@ -11,19 +11,21 @@ export default function AppLayout() {
   }
 
   return (
-    <div className="min-h-screen bg-paper">
-      <header className="border-b-2 border-ink flex items-center justify-between px-6 py-4">
-        <Link to="/dashboard" className="font-mono text-xs tracking-[0.2em] uppercase text-ink/70">
-          Self-Study Registrar
-        </Link>
-        <nav className="flex items-center gap-6 font-mono text-xs tracking-wide uppercase">
-          <Link to="/goal" className="text-indigo hover:text-oxblood transition-colors">
-            New enrollment
+    <div className="min-h-screen bg-zinc-950 text-zinc-100">
+      <header className="border-b border-zinc-800/80 bg-zinc-950/80 px-6 py-4 backdrop-blur">
+        <div className="mx-auto flex max-w-7xl items-center justify-between">
+          <Link to="/dashboard" className="font-mono text-[11px] uppercase tracking-[0.32em] text-zinc-300">
+            learning command center
           </Link>
-          <button onClick={handleLogout} className="text-ink/60 hover:text-oxblood transition-colors">
-            Log out
-          </button>
-        </nav>
+          <nav className="flex items-center gap-6 font-mono text-[11px] uppercase tracking-[0.2em] text-zinc-400">
+            <Link to="/goal" className="transition-colors hover:text-cyan-300">
+              new run
+            </Link>
+            <button onClick={handleLogout} className="transition-colors hover:text-cyan-300">
+              log out
+            </button>
+          </nav>
+        </div>
       </header>
       <Outlet />
     </div>

@@ -84,3 +84,18 @@ class ProgressOut(BaseModel):
     taskId: uuid.UUID
     status: str
     updatedAt: datetime | None = None
+
+
+class UserRoadmapSummaryOut(BaseModel):
+    planId: uuid.UUID
+    goalTitle: str
+    skillLevel: str
+    hoursPerWeek: int
+    totalWeeks: int
+    completedTasks: int
+    totalTasks: int
+    createdAt: datetime
+    status: str
+
+    class Config:
+        from_attributes = True

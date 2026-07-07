@@ -128,6 +128,52 @@ def generate_roadmap(
     )
 
 
+@router.get("/history", response_model=list[schemas.UserRoadmapSummaryOut])
+def list_user_roadmaps(
+    db: Session = Depends(get_db),
+    current_user: models.User = Depends(get_current_user),
+):
+    goals = db.query(models.LearningGoal).filter(models.LearningGoal.user_id == current_user.id).all()
+    summaries = []
+
+    for goal in goals:
+        plans = db.query(models.LearningPlan).filter(models.LearningPlan.goal_id == goal.id).all()
+        for plan in plans:
+            version = db.query(models.RoadmapVersion).filter(models.RoadmapVersion.id == plan.current_version_id).first()
+            if not version:
+                continue
+
+            weeks = db.query(models.WeeklyPlan).filter(models.WeeklyPlan.plan_version_id == version.id).all()
+            tasks = []
+            for week in weeks:
+                tasks.extend(db.query(models.Task).filter(models.Task.weekly_plan_id == week.id).all())
+
+            task_ids = [t.id for t in tasks]
+            progress_rows = db.query(models.Progress).filter(
+                models.Progress.task_id.in_(task_ids),
+                models.Progress.user_id == current_user.id,
+            ).all()
+            status_by_task = {p.task_id: p.status for p in progress_rows}
+            completed_tasks = sum(1 for status in status_by_task.values() if status == "completed")
+
+            summaries.append(
+                schemas.UserRoadmapSummaryOut(
+                    planId=plan.id,
+                    goalTitle=goal.title,
+                    skillLevel=goal.current_skill_level,
+                    hoursPerWeek=goal.hours_per_week,
+                    totalWeeks=len(weeks),
+                    completedTasks=completed_tasks,
+                    totalTasks=len(tasks),
+                    createdAt=goal.created_at,
+                    status=plan.status,
+                )
+            )
+
+    summaries.sort(key=lambda item: item.createdAt, reverse=True)
+    return summaries
+
+
 @router.get("/{plan_id}/weekly-plan")
 def get_weekly_plan(
     plan_id: str,

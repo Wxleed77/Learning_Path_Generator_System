@@ -4,10 +4,16 @@
 
 @layer base {
   body {
-    @apply bg-paper text-ink font-body antialiased;
+    @apply min-h-screen bg-zinc-950 text-zinc-100 font-body antialiased;
+    background-image: radial-gradient(circle at top left, rgba(34, 211, 238, 0.16), transparent 24%), linear-gradient(135deg, #020617 0%, #111827 60%, #09090b 100%);
   }
+
+  #root {
+    @apply min-h-screen;
+  }
+
   :focus-visible {
-    outline: 2px solid #B08A3E;
+    outline: 2px solid #22d3ee;
     outline-offset: 2px;
   }
 }
@@ -17,7 +23,7 @@
     to bottom,
     transparent,
     transparent 27px,
-    rgba(27, 31, 29, 0.07) 28px
+    rgba(255, 255, 255, 0.04) 28px
   );
 }
 

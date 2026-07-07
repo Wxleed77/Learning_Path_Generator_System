@@ -25,3 +25,15 @@ export interface RoadmapGenerateResponse {
   totalWeeks: number;
   weeks: { weekNumber: number; theme: string; estimatedHours: number; tasks: Task[] }[];
 }
+
+export interface UserRoadmapSummary {
+  planId: string;
+  goalTitle: string;
+  skillLevel: string;
+  hoursPerWeek: number;
+  totalWeeks: number;
+  completedTasks: number;
+  totalTasks: number;
+  createdAt: string;
+  status: string;
+}
