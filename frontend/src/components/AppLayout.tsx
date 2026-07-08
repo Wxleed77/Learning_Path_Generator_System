@@ -1,12 +1,15 @@
 import { useNavigate, Outlet, Link } from "react-router-dom";
 import { useAuthStore } from "../lib/authStore";
+import { usePlanStore } from "../lib/planStore";
 
 export default function AppLayout() {
-  const clear = useAuthStore((s) => s.clear);
+  const clearAuth = useAuthStore((s) => s.clear);
+  const clearPlan = usePlanStore((s) => s.clear);
   const navigate = useNavigate();
 
   function handleLogout() {
-    clear();
+    clearAuth();
+    clearPlan();
     navigate("/login");
   }
 

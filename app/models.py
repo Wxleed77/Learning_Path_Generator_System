@@ -90,6 +90,17 @@ class Progress(Base):
     completed_at = Column(DateTime, nullable=True)
 
 
+class QuizAttempt(Base):
+    __tablename__ = "quiz_attempts"
+
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    user_id = Column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=False)
+    roadmap_id = Column(UUID(as_uuid=True), ForeignKey("learning_plans.id"), nullable=False)
+    week_number = Column(Integer, nullable=False)
+    score = Column(Integer, nullable=False)
+    completed_at = Column(DateTime, default=datetime.utcnow)
+
+
 class RefreshToken(Base):
     __tablename__ = "refresh_tokens"
 

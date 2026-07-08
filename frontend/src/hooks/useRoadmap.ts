@@ -1,6 +1,13 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { api } from "../lib/api";
-import { RoadmapGenerateResponse, UserRoadmapSummary, WeeklyPlan } from "../lib/types";
+import {
+  HeatmapPoint,
+  QuizGenerationResponse,
+  QuizSubmissionResponse,
+  RoadmapGenerateResponse,
+  UserRoadmapSummary,
+  WeeklyPlan,
+} from "../lib/types";
 
 export function useGenerateRoadmap() {
   const queryClient = useQueryClient();
@@ -21,6 +28,34 @@ export function useUserRoadmaps() {
     queryKey: ["roadmaps", "history"],
     queryFn: async () => {
       const res = await api.get<UserRoadmapSummary[]>("/api/roadmap/history");
+      return res.data;
+    },
+  });
+}
+
+export function useHeatmap() {
+  return useQuery({
+    queryKey: ["progress", "heatmap"],
+    queryFn: async () => {
+      const res = await api.get<HeatmapPoint[]>("/api/progress/heatmap");
+      return res.data;
+    },
+  });
+}
+
+export function useGenerateQuiz() {
+  return useMutation({
+    mutationFn: async (payload: { roadmapId: string; weekNumber: number; count?: number }) => {
+      const res = await api.post<QuizGenerationResponse>("/api/quizzes/generate", payload);
+      return res.data;
+    },
+  });
+}
+
+export function useSubmitQuiz() {
+  return useMutation({
+    mutationFn: async (payload: { roadmapId: string; weekNumber: number; responses: { questionId: string; selectedOption: string; correctOption: string }[] }) => {
+      const res = await api.post<QuizSubmissionResponse>("/api/quizzes/submit", payload);
       return res.data;
     },
   });

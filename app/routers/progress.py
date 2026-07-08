@@ -1,4 +1,5 @@
-from datetime import datetime
+from collections import defaultdict
+from datetime import datetime, date
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from .. import models, schemas
@@ -21,6 +22,25 @@ def _assert_task_ownership(db: Session, task_id: str, user_id) -> models.Task:
     if not goal or goal.user_id != user_id:
         raise HTTPException(status_code=403, detail="Not the owner of this task")
     return task
+
+
+@router.get("/heatmap", response_model=list[schemas.HeatmapPointOut])
+def get_heatmap(
+    db: Session = Depends(get_db),
+    current_user: models.User = Depends(get_current_user),
+):
+    rows = (
+        db.query(models.Progress.completed_at)
+        .filter(models.Progress.user_id == current_user.id, models.Progress.status == "completed")
+        .all()
+    )
+
+    counts: dict[date, int] = defaultdict(int)
+    for (completed_at,) in rows:
+        if completed_at:
+            counts[completed_at.date()] += 1
+
+    return [schemas.HeatmapPointOut(date=day, count=count) for day, count in sorted(counts.items())]
 
 
 @router.patch("/{task_id}", response_model=schemas.ProgressOut)

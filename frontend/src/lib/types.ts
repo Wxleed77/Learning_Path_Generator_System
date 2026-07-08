@@ -37,3 +37,29 @@ export interface UserRoadmapSummary {
   createdAt: string;
   status: string;
 }
+
+export interface HeatmapPoint {
+  date: string;
+  count: number;
+}
+
+export interface QuizQuestion {
+  id: string;
+  prompt: string;
+  options: string[];
+  correctOption: string;
+  explanation?: string | null;
+}
+
+export interface QuizGenerationResponse {
+  roadmapId: string;
+  weekNumber: number;
+  questions: QuizQuestion[];
+}
+
+export interface QuizSubmissionResponse {
+  score: number;
+  passed: boolean;
+  rerouted: boolean;
+  message: string;
+}

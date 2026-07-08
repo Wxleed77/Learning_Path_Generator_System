@@ -1,9 +1,11 @@
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { usePlanStore } from "../lib/planStore";
-import { useGenerateRoadmap, useUpdateProgress, useUserRoadmaps, useWeeklyPlan } from "../hooks/useRoadmap";
+import { useGenerateRoadmap, useHeatmap, useUpdateProgress, useUserRoadmaps, useWeeklyPlan } from "../hooks/useRoadmap";
 import { courseCode } from "../lib/courseCode";
 import { Task } from "../lib/types";
+import HeatmapCard from "../components/HeatmapCard";
+import QuizPanel from "../components/QuizPanel";
 
 const TYPE_LABEL: Record<Task["type"], string> = {
   topic: "Topic",
@@ -45,6 +47,7 @@ export default function DashboardPage() {
 
   const generate = useGenerateRoadmap();
   const { data: historyData, isLoading: isHistoryLoading } = useUserRoadmaps();
+  const { data: heatmapData } = useHeatmap();
   const { data, isLoading, isError } = useWeeklyPlan(selectedPlanId, selectedWeek);
   const updateProgress = useUpdateProgress(selectedPlanId, selectedWeek);
 
@@ -216,8 +219,11 @@ export default function DashboardPage() {
           </aside>
 
           <main className="rounded-2xl border border-zinc-800 bg-zinc-950/80 p-4 sm:p-6">
-            {selectedPlan ? (
-              <div className="mx-auto max-w-4xl space-y-6">
+            <div className="mx-auto max-w-4xl space-y-6">
+              <HeatmapCard data={heatmapData ?? []} />
+
+              {selectedPlan ? (
+              <div className="space-y-6">
                 <div className="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
                   <div>
                     <p className="font-mono text-[10px] uppercase tracking-[0.3em] text-cyan-300/80">
@@ -343,6 +349,8 @@ export default function DashboardPage() {
                     </div>
                   )}
                 </div>
+
+                <QuizPanel roadmapId={selectedPlan.planId} weekNumber={selectedWeek} />
               </div>
             ) : (
               <div className="mx-auto grid max-w-4xl gap-6 xl:grid-cols-[1.05fr_0.95fr]">
@@ -427,6 +435,7 @@ export default function DashboardPage() {
                 </form>
               </div>
             )}
+            </div>
           </main>
         </div>
       </div>

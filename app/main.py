@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from .database import Base, engine
-from .routers import auth, users, roadmap, progress
+from .routers import auth, users, roadmap, progress, quizzes
 
 Base.metadata.create_all(bind=engine)
 
@@ -18,6 +18,7 @@ app.include_router(auth.router)
 app.include_router(users.router)
 app.include_router(roadmap.router)
 app.include_router(progress.router)
+app.include_router(quizzes.router)
 
 
 @app.get("/health")

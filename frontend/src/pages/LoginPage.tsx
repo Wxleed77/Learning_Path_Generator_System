@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { api } from "../lib/api";
 import { useAuthStore } from "../lib/authStore";
+import { usePlanStore } from "../lib/planStore";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -9,6 +10,7 @@ export default function LoginPage() {
   const [error, setError] = useState<string | null>(null);
   const [pending, setPending] = useState(false);
   const setTokens = useAuthStore((s) => s.setTokens);
+  const clearPlan = usePlanStore((s) => s.clear);
   const navigate = useNavigate();
 
   async function handleSubmit(e: React.FormEvent) {
@@ -17,6 +19,7 @@ export default function LoginPage() {
     setPending(true);
     try {
       const res = await api.post("/api/auth/login", { email, password });
+      clearPlan();
       setTokens(res.data.access_token, res.data.refresh_token);
       navigate("/dashboard");
     } catch (err: any) {

@@ -1,6 +1,6 @@
 from pydantic import BaseModel, EmailStr, constr, conint
 from typing import Literal
-from datetime import datetime
+from datetime import datetime, date
 import uuid
 
 
@@ -84,6 +84,50 @@ class ProgressOut(BaseModel):
     taskId: uuid.UUID
     status: str
     updatedAt: datetime | None = None
+
+
+class HeatmapPointOut(BaseModel):
+    date: date
+    count: int
+
+
+class QuizQuestionOut(BaseModel):
+    id: str
+    prompt: str
+    options: list[str]
+    correctOption: str
+    explanation: str | None = None
+
+
+class QuizGenerationRequest(BaseModel):
+    roadmapId: uuid.UUID
+    weekNumber: int
+    count: int = 1
+
+
+class QuizGenerationOut(BaseModel):
+    roadmapId: uuid.UUID
+    weekNumber: int
+    questions: list[QuizQuestionOut]
+
+
+class QuizResponseItem(BaseModel):
+    questionId: str
+    selectedOption: str
+    correctOption: str
+
+
+class QuizSubmissionRequest(BaseModel):
+    roadmapId: uuid.UUID
+    weekNumber: int
+    responses: list[QuizResponseItem]
+
+
+class QuizSubmissionOut(BaseModel):
+    score: int
+    passed: bool
+    rerouted: bool
+    message: str
 
 
 class UserRoadmapSummaryOut(BaseModel):

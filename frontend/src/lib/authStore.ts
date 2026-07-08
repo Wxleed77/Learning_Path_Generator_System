@@ -7,6 +7,11 @@ interface AuthState {
   clear: () => void;
 }
 
+function clearPersistedAuth() {
+  localStorage.removeItem("access_token");
+  localStorage.removeItem("refresh_token");
+}
+
 export const useAuthStore = create<AuthState>((set) => ({
   accessToken: localStorage.getItem("access_token"),
   refreshToken: localStorage.getItem("refresh_token"),
@@ -16,8 +21,7 @@ export const useAuthStore = create<AuthState>((set) => ({
     set({ accessToken: access, refreshToken: refresh });
   },
   clear: () => {
-    localStorage.removeItem("access_token");
-    localStorage.removeItem("refresh_token");
+    clearPersistedAuth();
     set({ accessToken: null, refreshToken: null });
   },
 }));
