@@ -4,17 +4,27 @@ interface HeatmapCardProps {
   data: HeatmapPoint[];
 }
 
-const days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
 export default function HeatmapCard({ data }: HeatmapCardProps) {
   const points = data ?? [];
   const byDate = new Map(points.map((item) => [item.date, item.count]));
   const today = new Date();
-  const cells = Array.from({ length: 35 }, (_, index) => {
-    const date = new Date(today);
-    date.setDate(today.getDate() - (34 - index));
+  const todayDayOfWeek = today.getDay();
+  const thirtyFiveDaysAgo = new Date(today);
+  thirtyFiveDaysAgo.setDate(today.getDate() - 34);
+  const startDayOfWeek = thirtyFiveDaysAgo.getDay();
+  const leadingEmptyDays = startDayOfWeek;
+  const totalCells = leadingEmptyDays + 35;
+  const cells = Array.from({ length: totalCells }, (_, index) => {
+    if (index < leadingEmptyDays) {
+      return { key: "", count: 0, date: null, isEmpty: true };
+    }
+    const daysOffset = index - leadingEmptyDays;
+    const date = new Date(thirtyFiveDaysAgo);
+    date.setDate(thirtyFiveDaysAgo.getDate() + daysOffset);
     const key = date.toISOString().slice(0, 10);
-    return { key, count: byDate.get(key) ?? 0, date };
+    return { key, count: byDate.get(key) ?? 0, date, isEmpty: false };
   });
 
   function getColor(count: number) {
@@ -36,7 +46,7 @@ export default function HeatmapCard({ data }: HeatmapCardProps) {
         </div>
       </div>
 
-      <div className="mt-4 grid grid-cols-[auto_1fr] gap-3">
+      <div className="mt-4 grid gap-3" style={{ gridTemplateColumns: "auto 1fr" }}>
         <div className="flex flex-col justify-between text-[10px] uppercase tracking-[0.24em] text-zinc-500">
           {days.map((day) => (
             <span key={day} className="h-4">
@@ -45,12 +55,12 @@ export default function HeatmapCard({ data }: HeatmapCardProps) {
           ))}
         </div>
 
-        <div className="grid grid-flow-col grid-rows-7 gap-1.5">
+        <div className="grid gap-1.5" style={{ gridTemplateColumns: `repeat(${Math.ceil(cells.length / 7)}, 1fr)`, gridAutoFlow: "dense" }}>
           {cells.map((cell) => (
             <div
-              key={cell.key}
-              className={`h-3.5 w-3.5 rounded-sm border border-zinc-800/70 ${getColor(cell.count)}`}
-              title={`${cell.key}: ${cell.count} completions`}
+              key={cell.key || `empty-${Math.random()}`}
+              className={`h-3.5 w-3.5 rounded-sm border border-zinc-800/70 ${cell.isEmpty ? "opacity-0" : getColor(cell.count)}`}
+              title={cell.key ? `${cell.key}: ${cell.count} completions` : ""}
             />
           ))}
         </div>

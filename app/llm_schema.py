@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 
 class ResourceItem(BaseModel):
@@ -21,21 +21,21 @@ class ProjectItem(BaseModel):
 
 
 class QuizMeta(BaseModel):
-    questionCount: int
-    topicsCovered: list[str]
-    passingScore: int
+    questionCount: int = 3
+    topicsCovered: list[str] = Field(default_factory=list)
+    passingScore: int = 70
 
 
 class WeekItem(BaseModel):
     weekNumber: int
     theme: str
     estimatedHours: int
-    difficulty: str
-    topics: list[TopicItem]
-    resources: list[ResourceItem]
-    projects: list[ProjectItem]
-    quiz: QuizMeta
-    milestone: str
+    difficulty: str = "beginner"
+    topics: list[TopicItem] = Field(default_factory=list)
+    resources: list[ResourceItem] = Field(default_factory=list)
+    projects: list[ProjectItem] = Field(default_factory=list)
+    quiz: QuizMeta = Field(default_factory=QuizMeta)
+    milestone: str = "Complete all tasks"
 
 
 class RoadmapLLMOutput(BaseModel):
