@@ -6,16 +6,24 @@ interface HeatmapCardProps {
 
 const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
+function toLocalDateString(date: Date): string {
+  const y = date.getFullYear();
+  const m = String(date.getMonth() + 1).padStart(2, "0");
+  const d = String(date.getDate()).padStart(2, "0");
+  return `${y}-${m}-${d}`;
+}
+
 export default function HeatmapCard({ data }: HeatmapCardProps) {
   const points = data ?? [];
   const byDate = new Map(points.map((item) => [item.date, item.count]));
   const today = new Date();
-  const todayDayOfWeek = today.getDay();
   const thirtyFiveDaysAgo = new Date(today);
   thirtyFiveDaysAgo.setDate(today.getDate() - 34);
-  const startDayOfWeek = thirtyFiveDaysAgo.getDay();
+  const startDayOfWeek = thirtyFiveDaysAgo.getDay(); // 0=Sun
   const leadingEmptyDays = startDayOfWeek;
   const totalCells = leadingEmptyDays + 35;
+  const columns = Math.ceil(totalCells / 7);
+
   const cells = Array.from({ length: totalCells }, (_, index) => {
     if (index < leadingEmptyDays) {
       return { key: "", count: 0, date: null, isEmpty: true };
@@ -23,7 +31,7 @@ export default function HeatmapCard({ data }: HeatmapCardProps) {
     const daysOffset = index - leadingEmptyDays;
     const date = new Date(thirtyFiveDaysAgo);
     date.setDate(thirtyFiveDaysAgo.getDate() + daysOffset);
-    const key = date.toISOString().slice(0, 10);
+    const key = toLocalDateString(date);
     return { key, count: byDate.get(key) ?? 0, date, isEmpty: false };
   });
 
@@ -49,16 +57,23 @@ export default function HeatmapCard({ data }: HeatmapCardProps) {
       <div className="mt-4 grid gap-3" style={{ gridTemplateColumns: "auto 1fr" }}>
         <div className="flex flex-col justify-between text-[10px] uppercase tracking-[0.24em] text-zinc-500">
           {days.map((day) => (
-            <span key={day} className="h-4">
+            <span key={day} className="h-4 leading-4">
               {day}
             </span>
           ))}
         </div>
 
-        <div className="grid gap-1.5" style={{ gridTemplateColumns: `repeat(${Math.ceil(cells.length / 7)}, 1fr)`, gridAutoFlow: "dense" }}>
-          {cells.map((cell) => (
+        <div
+          className="grid gap-1.5"
+          style={{
+            gridTemplateRows: "repeat(7, 1fr)",
+            gridAutoFlow: "column",
+            gridTemplateColumns: `repeat(${columns}, 1fr)`,
+          }}
+        >
+          {cells.map((cell, index) => (
             <div
-              key={cell.key || `empty-${Math.random()}`}
+              key={cell.key || `empty-${index}`}
               className={`h-3.5 w-3.5 rounded-sm border border-zinc-800/70 ${cell.isEmpty ? "opacity-0" : getColor(cell.count)}`}
               title={cell.key ? `${cell.key}: ${cell.count} completions` : ""}
             />

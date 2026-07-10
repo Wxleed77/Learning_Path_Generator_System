@@ -90,6 +90,21 @@ class Progress(Base):
     completed_at = Column(DateTime, nullable=True)
 
 
+class QuizQuestion(Base):
+    __tablename__ = "quiz_questions"
+
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    user_id = Column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=False)
+    roadmap_id = Column(UUID(as_uuid=True), ForeignKey("learning_plans.id"), nullable=False)
+    week_number = Column(Integer, nullable=False)
+    question_id = Column(String, nullable=False)  # "q1", "q2", etc.
+    prompt = Column(String, nullable=False)
+    options = Column(JSON, nullable=False)  # list of strings
+    correct_option = Column(String, nullable=False)  # the correct option text
+    explanation = Column(String, nullable=True)
+    created_at = Column(DateTime, default=datetime.utcnow)
+
+
 class QuizAttempt(Base):
     __tablename__ = "quiz_attempts"
 

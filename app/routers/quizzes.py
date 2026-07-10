@@ -69,13 +69,36 @@ Return JSON only with this shape:
   ]
 }}
 
-Keep the questions focused on the week's concepts and make sure every correctOption is one of the options."""
+Keep the questions focused on the week's concepts and make sure every correctOption is one of the options.
+correctOption must match the exact text of the correct option, not the index or letter."""
 
     raw = _call_groq([{"role": "user", "content": prompt}])
     parsed = json.loads(raw)
     questions = parsed.get("questions", [])
     if not questions:
         raise HTTPException(status_code=502, detail="Quiz generation failed")
+
+    # Store questions server-side so grading is done against stored correct answers
+    for q in questions:
+        existing = db.query(models.QuizQuestion).filter(
+            models.QuizQuestion.user_id == current_user.id,
+            models.QuizQuestion.roadmap_id == context["roadmapId"],
+            models.QuizQuestion.week_number == context["weekNumber"],
+            models.QuizQuestion.question_id == q["id"],
+        ).first()
+        if not existing:
+            stored_q = models.QuizQuestion(
+                user_id=current_user.id,
+                roadmap_id=context["roadmapId"],
+                week_number=context["weekNumber"],
+                question_id=q["id"],
+                prompt=q["prompt"],
+                options=q["options"],
+                correct_option=q["correctOption"],
+                explanation=q.get("explanation"),
+            )
+            db.add(stored_q)
+    db.commit()
 
     return schemas.QuizGenerationOut(
         roadmapId=context["roadmapId"],
@@ -155,10 +178,22 @@ def submit_quiz(
     if plan.goal_id is None:
         raise HTTPException(status_code=400, detail="Roadmap is not associated with a goal")
 
+    # Look up stored questions for grading (server-authoritative correct answers)
+    stored_questions = db.query(models.QuizQuestion).filter(
+        models.QuizQuestion.user_id == current_user.id,
+        models.QuizQuestion.roadmap_id == plan.id,
+        models.QuizQuestion.week_number == payload.weekNumber,
+    ).all()
+
+    stored_by_qid: dict[str, models.QuizQuestion] = {}
+    for sq in stored_questions:
+        stored_by_qid[sq.question_id] = sq
+
     total_questions = len(payload.responses)
     correct_answers = 0
     for response in payload.responses:
-        if response.selectedOption == response.correctOption:
+        stored = stored_by_qid.get(response.questionId)
+        if stored and response.selectedOption == stored.correct_option:
             correct_answers += 1
 
     score = round((correct_answers / total_questions) * 100) if total_questions else 0
