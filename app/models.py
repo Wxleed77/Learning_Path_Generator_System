@@ -110,10 +110,12 @@ class QuizAttempt(Base):
 
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     user_id = Column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=False)
-    roadmap_id = Column(UUID(as_uuid=True), ForeignKey("learning_plans.id"), nullable=False)
-    week_number = Column(Integer, nullable=False)
+    task_id = Column(UUID(as_uuid=True), ForeignKey("tasks.id"), nullable=False)
+    questions = Column(JSON, nullable=False)  # the actual questions presented
+    answers = Column(JSON, nullable=False)    # user's selected answers
     score = Column(Integer, nullable=False)
-    completed_at = Column(DateTime, default=datetime.utcnow)
+    passed = Column(String, nullable=False, default="false")  # "true"/"false"
+    created_at = Column(DateTime, default=datetime.utcnow)
 
 
 class RefreshToken(Base):

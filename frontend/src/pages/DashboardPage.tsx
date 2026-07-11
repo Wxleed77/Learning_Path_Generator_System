@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { usePlanStore } from "../lib/planStore";
 import { useGenerateRoadmap, useHeatmap, useUpdateProgress, useUserRoadmaps, useWeeklyPlan } from "../hooks/useRoadmap";
 import { courseCode } from "../lib/courseCode";
@@ -311,21 +311,31 @@ export default function DashboardPage() {
                                 <h4 className="mt-2 text-lg font-semibold text-zinc-100">{task.title}</h4>
                                 {task.description && <p className="mt-2 text-sm text-zinc-400">{task.description}</p>}
                               </div>
-                              <button
-                                onClick={() =>
-                                  updateProgress.mutate({
-                                    taskId: task.id,
-                                    status: task.status === "completed" ? "not_started" : "completed",
-                                  })
-                                }
-                                className={`rounded-full border px-3 py-1.5 font-mono text-[10px] uppercase tracking-[0.24em] transition ${
-                                  task.status === "completed"
-                                    ? "border-emerald-400/30 bg-emerald-500/10 text-emerald-200"
-                                    : "border-zinc-700 bg-zinc-800 text-zinc-300 hover:border-cyan-400/30 hover:text-cyan-200"
-                                }`}
-                              >
-                                {task.status === "completed" ? "reset" : "complete"}
-                              </button>
+                              <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+                                {task.type === "quiz" && (
+                                  <Link
+                                    to={`/quiz/${task.id}`}
+                                    className="rounded-full border border-cyan-400/30 bg-cyan-500/10 px-3 py-1.5 text-center font-mono text-[10px] uppercase tracking-[0.24em] text-cyan-200 transition hover:bg-cyan-500/20"
+                                  >
+                                    take quiz
+                                  </Link>
+                                )}
+                                <button
+                                  onClick={() =>
+                                    updateProgress.mutate({
+                                      taskId: task.id,
+                                      status: task.status === "completed" ? "not_started" : "completed",
+                                    })
+                                  }
+                                  className={`rounded-full border px-3 py-1.5 font-mono text-[10px] uppercase tracking-[0.24em] transition ${
+                                    task.status === "completed"
+                                      ? "border-emerald-400/30 bg-emerald-500/10 text-emerald-200"
+                                      : "border-zinc-700 bg-zinc-800 text-zinc-300 hover:border-cyan-400/30 hover:text-cyan-200"
+                                  }`}
+                                >
+                                  {task.status === "completed" ? "reset" : "complete"}
+                                </button>
+                              </div>
                             </div>
 
                             {task.resources.length > 0 && (

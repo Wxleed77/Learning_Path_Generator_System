@@ -3,6 +3,7 @@ import LoginPage from "./pages/LoginPage";
 import SignupPage from "./pages/SignupPage";
 import DashboardPage from "./pages/DashboardPage";
 import GoalFormPage from "./pages/GoalFormPage";
+import QuizPage from "./pages/QuizPage";
 import RequireAuth from "./hooks/RequireAuth";
 import AppLayout from "./components/AppLayout";
 
@@ -16,6 +17,7 @@ export default function App() {
           <Route element={<AppLayout />}>
             <Route path="/dashboard" element={<DashboardPage />} />
             <Route path="/goal" element={<GoalFormPage />} />
+            <Route path="/quiz/:taskId" element={<QuizPage />} />
           </Route>
         </Route>
         <Route path="*" element={<Navigate to="/dashboard" replace />} />
