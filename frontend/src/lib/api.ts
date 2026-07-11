@@ -1,7 +1,11 @@
 import axios from "axios";
 import { useAuthStore } from "./authStore";
 
-export const api = axios.create({ baseURL: "http://127.0.0.1:8000" });
+// In production (Vercel), set VITE_API_URL to your deployed backend URL.
+// Locally, it defaults to the local FastAPI server.
+const API_BASE = import.meta.env.VITE_API_URL || "http://127.0.0.1:8000";
+
+export const api = axios.create({ baseURL: API_BASE });
 
 api.interceptors.request.use((config) => {
   const token = useAuthStore.getState().accessToken;

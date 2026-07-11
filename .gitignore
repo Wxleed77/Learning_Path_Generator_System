@@ -32,3 +32,6 @@ node_modules
 *.sln
 *.sw?
 feature_roadmap_deplyment.md
+
+# Vercel output
+.vercel
