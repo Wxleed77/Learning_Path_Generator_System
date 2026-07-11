@@ -200,12 +200,41 @@ def submit_quiz(
     passed = score >= 50
     rerouted = False
 
+    # Find the quiz task for this week to link the attempt properly
+    weekly_plan = db.query(models.WeeklyPlan).filter(
+        models.WeeklyPlan.plan_version_id == plan.current_version_id,
+        models.WeeklyPlan.week_number == payload.weekNumber,
+    ).first()
+    quiz_task_id = None
+    if weekly_plan:
+        quiz_task = db.query(models.Task).filter(
+            models.Task.weekly_plan_id == weekly_plan.id,
+            models.Task.type == "quiz",
+        ).first()
+        if quiz_task:
+            quiz_task_id = quiz_task.id
+
+    # Build questions list from stored questions (for persistence)
+    stored_questions_list = [
+        {
+            "id": sq.question_id,
+            "question": sq.prompt,
+            "options": sq.options,
+            "correctAnswerIndex": sq.options.index(sq.correct_option) if sq.correct_option in sq.options else 0,
+        }
+        for sq in stored_questions
+    ]
+    # Build answers dict from responses
+    answers_dict = {r.questionId: r.selectedOption for r in payload.responses}
+
     attempt = models.QuizAttempt(
         user_id=current_user.id,
-        roadmap_id=plan.id,
-        week_number=payload.weekNumber,
+        task_id=quiz_task_id,
+        questions=stored_questions_list,
+        answers=answers_dict,
         score=score,
-        completed_at=datetime.utcnow(),
+        passed="true" if passed else "false",
+        created_at=datetime.utcnow(),
     )
     db.add(attempt)
     db.commit()

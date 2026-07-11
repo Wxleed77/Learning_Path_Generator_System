@@ -1,5 +1,5 @@
 from pydantic import BaseModel, EmailStr, constr, conint
-from typing import Literal
+from typing import Literal, Optional
 from datetime import datetime, date
 import uuid
 
@@ -23,6 +23,16 @@ class UserOut(BaseModel):
 
     class Config:
         from_attributes = True
+
+
+class UserUpdatePassword(BaseModel):
+    current_password: str
+    new_password: constr(min_length=6)
+
+
+class UserUpdateProfile(BaseModel):
+    name: Optional[str] = None
+    skill_level: Optional[Literal["beginner", "intermediate", "advanced"]] = None
 
 
 class TokenPair(BaseModel):

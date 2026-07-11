@@ -1,12 +1,22 @@
+import { useState, useEffect } from "react";
 import { useNavigate, Outlet, Link, useLocation } from "react-router-dom";
 import { useAuthStore } from "../lib/authStore";
 import { usePlanStore } from "../lib/planStore";
+import { api } from "../lib/api";
 
 export default function AppLayout() {
   const clearAuth = useAuthStore((s) => s.clear);
   const clearPlan = usePlanStore((s) => s.clear);
   const navigate = useNavigate();
   const location = useLocation();
+  const [userEmail, setUserEmail] = useState<string | null>(null);
+
+  useEffect(() => {
+    api
+      .get("/api/users/me")
+      .then((res) => setUserEmail(res.data.email))
+      .catch(() => {});
+  }, []);
 
   function handleLogout() {
     clearAuth();
@@ -17,6 +27,7 @@ export default function AppLayout() {
   const navLinks = [
     { to: "/dashboard", label: "dashboard" },
     { to: "/goal", label: "new run" },
+    { to: "/account", label: "account" },
   ];
 
   return (
@@ -47,6 +58,11 @@ export default function AppLayout() {
             </nav>
           </div>
           <div className="flex items-center gap-4">
+            {userEmail && (
+              <span className="hidden font-mono text-[9px] uppercase tracking-[0.2em] text-zinc-600 md:inline">
+                {userEmail}
+              </span>
+            )}
             <button
               onClick={handleLogout}
               className="font-mono text-[10px] uppercase tracking-[0.2em] text-zinc-500 transition hover:text-rose-300"

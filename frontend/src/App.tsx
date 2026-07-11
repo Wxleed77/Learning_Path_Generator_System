@@ -4,6 +4,7 @@ import SignupPage from "./pages/SignupPage";
 import DashboardPage from "./pages/DashboardPage";
 import GoalFormPage from "./pages/GoalFormPage";
 import QuizPage from "./pages/QuizPage";
+import AccountPage from "./pages/AccountPage";
 import RequireAuth from "./hooks/RequireAuth";
 import AppLayout from "./components/AppLayout";
 
@@ -18,6 +19,7 @@ export default function App() {
             <Route path="/dashboard" element={<DashboardPage />} />
             <Route path="/goal" element={<GoalFormPage />} />
             <Route path="/quiz/:taskId" element={<QuizPage />} />
+            <Route path="/account" element={<AccountPage />} />
           </Route>
         </Route>
         <Route path="*" element={<Navigate to="/dashboard" replace />} />
