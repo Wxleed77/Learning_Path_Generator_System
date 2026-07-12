@@ -1,8 +1,12 @@
+import os
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy import text
+from dotenv import load_dotenv
 from .database import Base, engine
 from .routers import auth, users, roadmap, progress, quizzes, quiz
+
+load_dotenv()
 
 # Migration: drop old quiz_attempts table so it's recreated with new schema
 # (task_id, questions, answers, passed instead of old roadmap_id/week_number)
@@ -14,9 +18,14 @@ Base.metadata.create_all(bind=engine)
 
 app = FastAPI(title="Learning Path Generator API")
 
+# Allow specific frontend origins + localhost for dev
+CORS_ORIGINS = os.getenv("CORS_ORIGINS", "http://localhost:5173,http://127.0.0.1:5173")
+origins = [o.strip() for o in CORS_ORIGINS.split(",")]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # tighten before production
+    allow_origins=origins,
+    allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
