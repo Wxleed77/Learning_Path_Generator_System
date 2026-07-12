@@ -273,6 +273,3 @@ The frontend will be available at `http://localhost:5173`.
 
 ---
 
-## License
-
-No license specified. If you'd like to add one (MIT, GPL, etc.), let me know and I can add it.
