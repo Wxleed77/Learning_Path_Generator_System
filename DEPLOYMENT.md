@@ -11,7 +11,7 @@ assumed to already be running.
 - A GitHub repository containing this code (public or private — Back4app
   supports both)
 - A Supabase PostgreSQL database (free tier) — you already have the
-  `connection_string`
+  `CONNECTION_STRING`
 - A Groq API key — https://console.groq.com
 - An OpenRouter API key — https://openrouter.ai/keys
 - Your Vercel frontend URL (e.g. `https://your-app.vercel.app`)
@@ -25,7 +25,7 @@ commit them to the repo):
 
 | Variable | Required | Description |
 |---|---|---|
-| `connection_string` | Yes | Full PostgreSQL connection string from Supabase (Project Settings → Database) |
+| `CONNECTION_STRING` | Yes | Full PostgreSQL connection string from Supabase (Project Settings → Database) |
 | `JWT_SECRET` | Yes | Random secret string for signing JWT tokens |
 | `JWT_ALGORITHM` | No | Default: `HS256` |
 | `ACCESS_TOKEN_EXPIRE_MINUTES` | No | Default: `30` |

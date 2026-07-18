@@ -160,7 +160,7 @@ cp .env.example .env
 Edit `.env` with your credentials:
 
 ```env
-connection_string="postgresql://postgres.USER:PASSWORD@aws-0-ap-northeast-1.pooler.supabase.com:6543/postgres"
+CONNECTION_STRING="postgresql://postgres.USER:PASSWORD@aws-0-ap-northeast-1.pooler.supabase.com:6543/postgres"
 JWT_SECRET="your-secret-key"
 GROQ_API_KEY="gsk-..."
 OPENROUTER_API_KEY="sk-or-v1-..."
@@ -195,7 +195,7 @@ The frontend will be available at `http://localhost:5173`.
 
 | Variable | Required | Description | Where to Get It |
 |---|---|---|---|
-| `connection_string` | Yes | PostgreSQL connection string | Supabase dashboard → Project Settings → Database |
+| `CONNECTION_STRING` | Yes | PostgreSQL connection string | Supabase dashboard → Project Settings → Database |
 | `JWT_SECRET` | Yes | Secret key for signing JWT tokens | Generate a random string |
 | `JWT_ALGORITHM` | No | JWT signing algorithm (default: HS256) | — |
 | `ACCESS_TOKEN_EXPIRE_MINUTES` | No | Access token lifetime (default: 30) | — |
@@ -268,7 +268,7 @@ The frontend will be available at `http://localhost:5173`.
 
 1. Create a free Supabase project at https://supabase.com
 2. Go to **Project Settings** → **Database** → copy the connection string
-3. Use it as the `connection_string` environment variable
+3. Use it as the `CONNECTION_STRING` environment variable
 4. Tables are auto-created on first startup via `Base.metadata.create_all()`
 
 ---
