@@ -19,8 +19,14 @@ Base.metadata.create_all(bind=engine)
 app = FastAPI(title="Learning Path Generator API")
 
 # Allow specific frontend origins + localhost for dev
-CORS_ORIGINS = os.getenv("CORS_ORIGINS", "http://localhost:5173,http://127.0.0.1:5173")
-origins = [o.strip() for o in CORS_ORIGINS.split(",")]
+#CORS_ORIGINS = os.getenv("CORS_ORIGINS", "http://localhost:5173,http://127.0.0.1:5173")
+#origins = [o.strip() for o in CORS_ORIGINS.split(",")]
+# Replace the old CORS_ORIGINS lines with this:
+origins = [
+    "https://learning-path-generator-system.vercel.app",
+    "http://localhost:5173",
+    "http://127.0.0.1:5173",
+]
 
 app.add_middleware(
     CORSMiddleware,
