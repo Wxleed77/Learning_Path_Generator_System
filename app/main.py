@@ -23,7 +23,7 @@ app = FastAPI(title="Learning Path Generator API")
 #origins = [o.strip() for o in CORS_ORIGINS.split(",")]
 # Replace the old CORS_ORIGINS lines with this:
 origins = [
-    "https://learning-path-generator-system.vercel.app",
+    "https://peronalized-learning-system.vercel.app",
     "http://localhost:5173",
     "http://127.0.0.1:5173",
 ]
