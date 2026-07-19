@@ -6,6 +6,7 @@ import { courseCode } from "../lib/courseCode";
 import { Task } from "../lib/types";
 import HeatmapCard from "../components/HeatmapCard";
 import QuizPanel from "../components/QuizPanel";
+import LlmLoadingState from "../components/LlmLoadingState";
 
 const TYPE_LABEL: Record<Task["type"], string> = {
   topic: "Topic",
@@ -430,13 +431,28 @@ export default function DashboardPage() {
                     </label>
                   </div>
 
-                  <button
-                    type="submit"
-                    disabled={generate.isPending || !draftGoal.trim()}
-                    className="mt-5 w-full rounded-xl border border-cyan-400/40 bg-cyan-500/10 px-4 py-3 font-mono text-[10px] uppercase tracking-[0.28em] text-cyan-200 transition hover:bg-cyan-500/20 disabled:cursor-not-allowed disabled:opacity-50"
-                  >
-                    {generate.isPending ? "compiling path…" : "generate path"}
-                  </button>
+                  {generate.isPending ? (
+                    <div className="mt-5 rounded-xl border border-cyan-400/20 bg-zinc-900/80 px-4 py-4">
+                      <LlmLoadingState
+                        phases={[
+                          { label: "analyzing goal parameters", duration: 1500 },
+                          { label: "drafting week structure", duration: 2000 },
+                          { label: "sourcing learning resources", duration: 2200 },
+                          { label: "generating quiz checkpoints", duration: 1800 },
+                          { label: "validating output schema", duration: 1200 },
+                        ]}
+                        variant="scanline"
+                      />
+                    </div>
+                  ) : (
+                    <button
+                      type="submit"
+                      disabled={generate.isPending || !draftGoal.trim()}
+                      className="mt-5 w-full rounded-xl border border-cyan-400/40 bg-cyan-500/10 px-4 py-3 font-mono text-[10px] uppercase tracking-[0.28em] text-cyan-200 transition hover:bg-cyan-500/20 disabled:cursor-not-allowed disabled:opacity-50"
+                    >
+                      generate path
+                    </button>
+                  )}
                   {generate.isError && (
                     <p className="mt-3 text-sm text-rose-300">
                       {(generate.error as any)?.response?.data?.detail ?? "Path generation failed. Try again."}

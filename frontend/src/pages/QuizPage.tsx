@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { useGenerateQuiz, useSubmitQuiz, useQuizAttempts, QuizQuestion, QuizFeedback } from "../hooks/useQuiz";
+import LlmLoadingState from "../components/LlmLoadingState";
 
 type Phase = "intro" | "taking" | "results";
 
@@ -122,13 +123,26 @@ export default function QuizPage() {
             </div>
           </div>
 
-          <button
-            onClick={handleStart}
-            disabled={generateQuiz.isPending}
-            className="mt-6 w-full rounded-2xl border border-cyan-400/40 bg-cyan-500/10 px-6 py-3 font-mono text-[11px] uppercase tracking-[0.28em] text-cyan-200 transition hover:bg-cyan-500/20 disabled:cursor-not-allowed disabled:opacity-50"
-          >
-            {generateQuiz.isPending ? "generating questions…" : "start quiz"}
-          </button>
+          {generateQuiz.isPending ? (
+            <div className="mt-6 rounded-xl border border-cyan-400/20 bg-zinc-900/80 px-4 py-4">
+              <LlmLoadingState
+                phases={[
+                  { label: "generating quiz questions", duration: 1800 },
+                  { label: "analyzing week content", duration: 1500 },
+                  { label: "validating question schema", duration: 1200 },
+                ]}
+                variant="default"
+              />
+            </div>
+          ) : (
+            <button
+              onClick={handleStart}
+              disabled={generateQuiz.isPending}
+              className="mt-6 w-full rounded-2xl border border-cyan-400/40 bg-cyan-500/10 px-6 py-3 font-mono text-[11px] uppercase tracking-[0.28em] text-cyan-200 transition hover:bg-cyan-500/20 disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              start quiz
+            </button>
+          )}
           {generateQuiz.isError && (
             <p className="mt-3 text-sm text-rose-300">Failed to generate quiz. Please try again.</p>
           )}
@@ -250,7 +264,14 @@ export default function QuizPage() {
                   disabled={!allAnswered || submitQuiz.isPending}
                   className="rounded-2xl border border-emerald-400/40 bg-emerald-500/10 px-6 py-2 font-mono text-[10px] uppercase tracking-[0.24em] text-emerald-200 transition hover:bg-emerald-500/20 disabled:cursor-not-allowed disabled:opacity-40"
                 >
-                  {submitQuiz.isPending ? "submitting…" : "submit all"}
+                  {submitQuiz.isPending ? (
+                    <span className="inline-flex items-center gap-2">
+                      <span className="inline-block h-2.5 w-2.5 animate-pulse rounded-full bg-emerald-400/60" />
+                      grading…
+                    </span>
+                  ) : (
+                    "submit all"
+                  )}
                 </button>
               )}
             </div>

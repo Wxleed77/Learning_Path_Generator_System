@@ -21,6 +21,15 @@ export default {
           "60%": { transform: "rotate(-8deg) scale(0.95)", opacity: "1" },
           "100%": { transform: "rotate(-8deg) scale(1)", opacity: "1" },
         },
+        scan: {
+          "0%": { transform: "translateX(-100%)" },
+          "100%": { transform: "translateX(400%)" },
+        },
+        indeterminate: {
+          "0%": { transform: "translateX(-100%)" },
+          "50%": { transform: "translateX(100%)" },
+          "100%": { transform: "translateX(-100%)" },
+        },
       },
       animation: {
         stamp: "stamp 180ms ease-out",

@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { useGenerateQuiz, useSubmitQuiz } from "../hooks/useRoadmap";
+import LlmLoadingState from "./LlmLoadingState";
 
 interface QuizPanelProps {
   roadmapId: string;
@@ -56,7 +57,18 @@ export default function QuizPanel({ roadmapId, weekNumber }: QuizPanelProps) {
         </div>
       </div>
 
-      {generateQuiz.isPending && <p className="mt-4 text-sm text-zinc-400">Preparing your quiz…</p>}
+      {generateQuiz.isPending && (
+        <div className="mt-4 rounded-xl border border-cyan-400/20 bg-zinc-900/80 px-4 py-4">
+          <LlmLoadingState
+            phases={[
+              { label: "generating quiz questions", duration: 1800 },
+              { label: "analyzing week content", duration: 1500 },
+              { label: "validating question schema", duration: 1200 },
+            ]}
+            variant="default"
+          />
+        </div>
+      )}
       {generateQuiz.isError && <p className="mt-4 text-sm text-rose-300">Quiz generation failed. Try again.</p>}
 
       {!generateQuiz.isPending && questions.length > 0 && (
@@ -90,7 +102,14 @@ export default function QuizPanel({ roadmapId, weekNumber }: QuizPanelProps) {
             disabled={submitQuiz.isPending || Object.keys(selected).length < questions.length}
             className="w-full rounded-2xl border border-cyan-400/40 bg-cyan-500/10 px-4 py-3 font-mono text-[10px] uppercase tracking-[0.28em] text-cyan-200 transition hover:bg-cyan-500/20 disabled:cursor-not-allowed disabled:opacity-50"
           >
-            {submitQuiz.isPending ? "Submitting…" : "Submit quiz"}
+            {submitQuiz.isPending ? (
+              <span className="inline-flex items-center gap-2">
+                <span className="inline-block h-2.5 w-2.5 animate-pulse rounded-full bg-cyan-400/60" />
+                grading…
+              </span>
+            ) : (
+              "Submit quiz"
+            )}
           </button>
         </div>
       )}
