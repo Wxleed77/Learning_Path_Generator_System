@@ -42,7 +42,7 @@ app.include_router(quiz.router)
 app.include_router(goals.router)
 
 
-@app.get("/health",methods=["GET","HEAD"])
+@app.api_route("/health", methods=["GET", "HEAD"])
 def health():
     with engine.connect() as conn:
         conn.execute(text("SELECT 1"))
