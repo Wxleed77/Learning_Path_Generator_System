@@ -118,6 +118,21 @@ class QuizAttempt(Base):
     created_at = Column(DateTime, default=datetime.utcnow)
 
 
+class GeneratedQuizQuestion(Base):
+    __tablename__ = "generated_quiz_questions"
+
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    user_id = Column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=False)
+    task_id = Column(UUID(as_uuid=True), ForeignKey("tasks.id"), nullable=False)
+    position = Column(Integer, nullable=False, default=0)
+    question_id = Column(String, nullable=False)  # "q1", "q2", ...
+    question = Column(String, nullable=False)
+    options = Column(JSON, nullable=False)  # list of strings
+    correct_answer_index = Column(Integer, nullable=False)
+    explanation = Column(String, nullable=True)
+    created_at = Column(DateTime, default=datetime.utcnow)
+
+
 class RefreshToken(Base):
     __tablename__ = "refresh_tokens"
 

@@ -8,12 +8,7 @@ from .routers import auth, users, roadmap, progress, quizzes, quiz
 
 load_dotenv()
 
-# Migration: drop old quiz_attempts table so it's recreated with new schema
-# (task_id, questions, answers, passed instead of old roadmap_id/week_number)
-with engine.connect() as conn:
-    conn.execute(text("DROP TABLE IF EXISTS quiz_attempts CASCADE"))
-    conn.commit()
-
+# Create any missing tables. Never drop existing data here.
 Base.metadata.create_all(bind=engine)
 
 app = FastAPI(title="Learning Path Generator API")

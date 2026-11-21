@@ -18,7 +18,14 @@ from .users import get_current_user
 router = APIRouter(prefix="/api/quiz", tags=["quiz"])
 
 
-def _get_week_context_for_quiz(db: Session, task_id: str, user_id) -> dict[str, Any]:
+def _parse_task_id(task_id: str) -> uuid.UUID:
+    try:
+        return uuid.UUID(task_id)
+    except (ValueError, AttributeError, TypeError):
+        raise HTTPException(status_code=404, detail="Task not found")
+
+
+def _get_week_context_for_quiz(db: Session, task_id: uuid.UUID, user_id) -> dict[str, Any]:
     """Fetch the weekly plan + all topic/project tasks for quiz context."""
     task = db.query(models.Task).filter(models.Task.id == task_id).first()
     if not task:
@@ -73,8 +80,13 @@ def generate_quiz(
     db: Session = Depends(get_db),
     current_user: models.User = Depends(get_current_user),
 ):
-    """Generate quiz questions for a given quiz-type task using OpenRouter."""
-    ctx = _get_week_context_for_quiz(db, task_id, current_user.id)
+    """Generate quiz questions for a given quiz-type task using OpenRouter.
+
+    The correct answers are stored server-side and never sent to the client,
+    so grading cannot be influenced by the request body.
+    """
+    task_uuid = _parse_task_id(task_id)
+    ctx = _get_week_context_for_quiz(db, task_uuid, current_user.id)
 
     llm_result = generate_quiz_via_llm(
         theme=ctx["theme"],
@@ -85,15 +97,41 @@ def generate_quiz(
     )
 
     questions = llm_result["questions"]
-    # Assign sequential IDs to each question
+
+    # Replace any previously generated questions for this task/session.
+    db.query(models.GeneratedQuizQuestion).filter(
+        models.GeneratedQuizQuestion.user_id == current_user.id,
+        models.GeneratedQuizQuestion.task_id == task_uuid,
+    ).delete()
+
     for i, q in enumerate(questions):
-        q["id"] = f"q{i+1}"
+        db.add(
+            models.GeneratedQuizQuestion(
+                user_id=current_user.id,
+                task_id=task_uuid,
+                position=i,
+                question_id=f"q{i+1}",
+                question=q["question"],
+                options=q["options"],
+                correct_answer_index=q["correctAnswerIndex"],
+                explanation=q.get("explanation"),
+            )
+        )
+    db.commit()
 
     return {
         "taskId": task_id,
         "weekNumber": ctx["week_number"],
         "theme": ctx["theme"],
-        "questions": questions,
+        "questions": [
+            {
+                "id": f"q{i+1}",
+                "question": q["question"],
+                "options": q["options"],
+                "explanation": q.get("explanation"),
+            }
+            for i, q in enumerate(questions)
+        ],
     }
 
 
@@ -104,34 +142,49 @@ def submit_quiz(
     db: Session = Depends(get_db),
     current_user: models.User = Depends(get_current_user),
 ):
-    """Submit quiz answers, grade them, persist attempt, and return results."""
-    ctx = _get_week_context_for_quiz(db, task_id, current_user.id)
+    """Grade submitted answers against the server-stored questions.
 
-    questions = payload.get("questions", [])
+    Any `questions` supplied in the request body are ignored for grading.
+    """
+    task_uuid = _parse_task_id(task_id)
+    _get_week_context_for_quiz(db, task_uuid, current_user.id)
+
     answers = payload.get("answers", {})
+    if not answers:
+        raise HTTPException(status_code=400, detail="Missing answers")
 
-    if not questions or not answers:
-        raise HTTPException(status_code=400, detail="Missing questions or answers")
+    stored_questions = (
+        db.query(models.GeneratedQuizQuestion)
+        .filter(
+            models.GeneratedQuizQuestion.user_id == current_user.id,
+            models.GeneratedQuizQuestion.task_id == task_uuid,
+        )
+        .order_by(models.GeneratedQuizQuestion.position)
+        .all()
+    )
+    if not stored_questions:
+        raise HTTPException(
+            status_code=400,
+            detail="No quiz session found for this task. Please regenerate the quiz.",
+        )
 
-    total = len(questions)
+    total = len(stored_questions)
     correct = 0
     per_question_feedback = []
 
-    for q in questions:
-        qid = q.get("id", "")
-        user_answer = answers.get(qid, -1)
-        correct_idx = q.get("correctAnswerIndex", -1)
-        is_correct = user_answer == correct_idx
+    for sq in stored_questions:
+        user_answer = answers.get(sq.question_id, -1)
+        is_correct = user_answer == sq.correct_answer_index
         if is_correct:
             correct += 1
         per_question_feedback.append({
-            "questionId": qid,
-            "question": q.get("question", ""),
-            "options": q.get("options", []),
-            "correctAnswerIndex": correct_idx,
+            "questionId": sq.question_id,
+            "question": sq.question,
+            "options": sq.options,
+            "correctAnswerIndex": sq.correct_answer_index,
             "userAnswer": user_answer,
             "isCorrect": is_correct,
-            "explanation": q.get("explanation", ""),
+            "explanation": sq.explanation or "",
         })
 
     score = round((correct / total) * 100) if total else 0
@@ -139,8 +192,16 @@ def submit_quiz(
 
     attempt = models.QuizAttempt(
         user_id=current_user.id,
-        task_id=task_id,
-        questions=questions,
+        task_id=task_uuid,
+        questions=[
+            {
+                "id": sq.question_id,
+                "question": sq.question,
+                "options": sq.options,
+                "correctAnswerIndex": sq.correct_answer_index,
+            }
+            for sq in stored_questions
+        ],
         answers=answers,
         score=score,
         passed=passed_val,
@@ -168,15 +229,14 @@ def list_attempts(
     current_user: models.User = Depends(get_current_user),
 ):
     """List past quiz attempts for a given task."""
-    # Verify task exists and belongs to user
-    task = db.query(models.Task).filter(models.Task.id == task_id).first()
-    if not task:
-        raise HTTPException(status_code=404, detail="Task not found")
+    task_uuid = _parse_task_id(task_id)
+    # Verify task exists and belongs to the current user
+    _get_week_context_for_quiz(db, task_uuid, current_user.id)
 
     attempts = (
         db.query(models.QuizAttempt)
         .filter(
-            models.QuizAttempt.task_id == task_id,
+            models.QuizAttempt.task_id == task_uuid,
             models.QuizAttempt.user_id == current_user.id,
         )
         .order_by(models.QuizAttempt.created_at.desc())

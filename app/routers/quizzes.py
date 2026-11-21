@@ -14,10 +14,14 @@ from .users import get_current_user
 router = APIRouter(prefix="/api/quizzes", tags=["quizzes"])
 
 
-def _build_week_context(db: Session, roadmap_id: str, week_number: int) -> dict[str, Any]:
+def _build_week_context(db: Session, roadmap_id: str, week_number: int, user_id) -> dict[str, Any]:
     plan = db.query(models.LearningPlan).filter(models.LearningPlan.id == roadmap_id).first()
     if not plan:
         raise HTTPException(status_code=404, detail="Roadmap not found")
+
+    goal = db.query(models.LearningGoal).filter(models.LearningGoal.id == plan.goal_id).first()
+    if not goal or goal.user_id != user_id:
+        raise HTTPException(status_code=403, detail="Not the owner of this roadmap")
 
     version = db.query(models.RoadmapVersion).filter(models.RoadmapVersion.id == plan.current_version_id).first()
     if not version:
@@ -48,7 +52,7 @@ def generate_quiz(
     db: Session = Depends(get_db),
     current_user: models.User = Depends(get_current_user),
 ):
-    context = _build_week_context(db, str(payload.roadmapId), payload.weekNumber)
+    context = _build_week_context(db, str(payload.roadmapId), payload.weekNumber, current_user.id)
     prompt = f"""You are an expert learning coach. Create {payload.count} multiple-choice quiz questions for a learner studying this week.
 
 Roadmap: {context['roadmapId']}
@@ -175,8 +179,9 @@ def submit_quiz(
     if not plan:
         raise HTTPException(status_code=404, detail="Roadmap not found")
 
-    if plan.goal_id is None:
-        raise HTTPException(status_code=400, detail="Roadmap is not associated with a goal")
+    goal = db.query(models.LearningGoal).filter(models.LearningGoal.id == plan.goal_id).first()
+    if not goal or goal.user_id != current_user.id:
+        raise HTTPException(status_code=403, detail="Not the owner of this roadmap")
 
     # Look up stored questions for grading (server-authoritative correct answers)
     stored_questions = db.query(models.QuizQuestion).filter(
@@ -213,6 +218,9 @@ def submit_quiz(
         ).first()
         if quiz_task:
             quiz_task_id = quiz_task.id
+
+    if quiz_task_id is None:
+        raise HTTPException(status_code=404, detail="Quiz task not found for this week")
 
     # Build questions list from stored questions (for persistence)
     stored_questions_list = [
