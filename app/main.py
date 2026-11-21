@@ -46,4 +46,6 @@ app.include_router(quiz.router)
 
 @app.get("/health")
 def health():
+    with engine.connect() as conn:
+        conn.execute(text("SELECT 1"))
     return {"status": "ok"}
