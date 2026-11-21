@@ -47,8 +47,14 @@ export interface QuizQuestion {
   id: string;
   prompt: string;
   options: string[];
-  correctOption: string;
   explanation?: string | null;
+}
+
+export interface CommonGoal {
+  id: string;
+  title: string;
+  category: string;
+  description?: string | null;
 }
 
 export interface QuizGenerationResponse {

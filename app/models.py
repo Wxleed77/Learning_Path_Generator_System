@@ -118,6 +118,16 @@ class QuizAttempt(Base):
     created_at = Column(DateTime, default=datetime.utcnow)
 
 
+class CommonGoal(Base):
+    __tablename__ = "common_goals"
+
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    title = Column(String, unique=True, nullable=False, index=True)
+    category = Column(String, nullable=False)
+    description = Column(String, nullable=True)
+    sort_order = Column(Integer, default=0)
+
+
 class GeneratedQuizQuestion(Base):
     __tablename__ = "generated_quiz_questions"
 

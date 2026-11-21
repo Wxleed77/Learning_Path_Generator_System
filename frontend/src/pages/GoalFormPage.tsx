@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { useGenerateRoadmap } from "../hooks/useRoadmap";
+import { useCommonGoals, useGenerateRoadmap } from "../hooks/useRoadmap";
 import { usePlanStore } from "../lib/planStore";
 import { courseCode } from "../lib/courseCode";
 
@@ -9,6 +9,7 @@ export default function GoalFormPage() {
   const [skillLevel, setSkillLevel] = useState("beginner");
   const [hoursPerWeek, setHoursPerWeek] = useState(10);
   const generate = useGenerateRoadmap();
+  const { data: commonGoals } = useCommonGoals();
   const setPlan = usePlanStore((s) => s.setPlan);
   const navigate = useNavigate();
 
@@ -64,6 +65,29 @@ export default function GoalFormPage() {
                   maxLength={200}
                 />
               </label>
+
+              {commonGoals && commonGoals.length > 0 && (
+                <div>
+                  <span className="mb-2 block font-mono text-[10px] uppercase tracking-[0.24em] text-zinc-500">Popular goals</span>
+                  <div className="flex flex-wrap gap-2">
+                    {commonGoals.map((goal) => (
+                      <button
+                        key={goal.id}
+                        type="button"
+                        onClick={() => setGoalTitle(goal.title)}
+                        title={goal.description ?? undefined}
+                        className={`rounded-full border px-3 py-1.5 text-xs transition ${
+                          goalTitle === goal.title
+                            ? "border-cyan-400/50 bg-cyan-500/10 text-cyan-200"
+                            : "border-zinc-800 bg-zinc-950/70 text-zinc-400 hover:border-zinc-700 hover:text-zinc-200"
+                        }`}
+                      >
+                        {goal.title}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
 
               <div>
                 <span className="mb-2 block font-mono text-[10px] uppercase tracking-[0.24em] text-zinc-500">Preview Code</span>

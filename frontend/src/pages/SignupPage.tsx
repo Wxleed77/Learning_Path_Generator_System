@@ -94,8 +94,10 @@ export default function SignupPage() {
                   type="password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
+                  minLength={8}
                   required
                 />
+                <p className="mt-1 text-xs text-zinc-500">At least 8 characters.</p>
               </label>
             </div>
 

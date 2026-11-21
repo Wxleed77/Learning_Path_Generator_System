@@ -4,12 +4,14 @@ from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy import text
 from dotenv import load_dotenv
 from .database import Base, engine
-from .routers import auth, users, roadmap, progress, quizzes, quiz
+from .routers import auth, users, roadmap, progress, quizzes, quiz, goals
+from .seed import seed_common_goals
 
 load_dotenv()
 
 # Create any missing tables. Never drop existing data here.
 Base.metadata.create_all(bind=engine)
+seed_common_goals()
 
 app = FastAPI(title="Learning Path Generator API")
 
@@ -37,9 +39,10 @@ app.include_router(roadmap.router)
 app.include_router(progress.router)
 app.include_router(quizzes.router)
 app.include_router(quiz.router)
+app.include_router(goals.router)
 
 
-@app.get("/health")
+@app.get("/health",methods=["GET","HEAD"])
 def health():
     with engine.connect() as conn:
         conn.execute(text("SELECT 1"))

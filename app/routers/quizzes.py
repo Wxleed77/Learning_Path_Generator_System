@@ -9,6 +9,7 @@ from sqlalchemy.orm import Session
 from .. import models, schemas
 from ..database import SessionLocal, get_db
 from ..llm_client import _call_groq
+from ..rate_limit import rate_limit
 from .users import get_current_user
 
 router = APIRouter(prefix="/api/quizzes", tags=["quizzes"])
@@ -46,7 +47,11 @@ def _build_week_context(db: Session, roadmap_id: str, week_number: int, user_id)
     }
 
 
-@router.post("/generate", response_model=schemas.QuizGenerationOut)
+@router.post(
+    "/generate",
+    response_model=schemas.QuizGenerationOut,
+    dependencies=[Depends(rate_limit(5, 60))],
+)
 def generate_quiz(
     payload: schemas.QuizGenerationRequest,
     db: Session = Depends(get_db),
@@ -112,7 +117,6 @@ correctOption must match the exact text of the correct option, not the index or 
                 id=q["id"],
                 prompt=q["prompt"],
                 options=q["options"],
-                correctOption=q["correctOption"],
                 explanation=q.get("explanation"),
             )
             for q in questions
@@ -168,7 +172,11 @@ Return JSON only with this shape:
         db.close()
 
 
-@router.post("/submit", response_model=schemas.QuizSubmissionOut)
+@router.post(
+    "/submit",
+    response_model=schemas.QuizSubmissionOut,
+    dependencies=[Depends(rate_limit(10, 60))],
+)
 def submit_quiz(
     payload: schemas.QuizSubmissionRequest,
     background_tasks: BackgroundTasks,

@@ -1,6 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { api } from "../lib/api";
 import {
+  CommonGoal,
   HeatmapPoint,
   QuizGenerationResponse,
   QuizSubmissionResponse,
@@ -19,6 +20,16 @@ export function useGenerateRoadmap() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["roadmaps", "history"] });
+    },
+  });
+}
+
+export function useCommonGoals() {
+  return useQuery({
+    queryKey: ["goals", "common"],
+    queryFn: async () => {
+      const res = await api.get<CommonGoal[]>("/api/goals/common");
+      return res.data;
     },
   });
 }
@@ -54,7 +65,7 @@ export function useGenerateQuiz() {
 
 export function useSubmitQuiz() {
   return useMutation({
-    mutationFn: async (payload: { roadmapId: string; weekNumber: number; responses: { questionId: string; selectedOption: string; correctOption: string }[] }) => {
+    mutationFn: async (payload: { roadmapId: string; weekNumber: number; responses: { questionId: string; selectedOption: string }[] }) => {
       const res = await api.post<QuizSubmissionResponse>("/api/quizzes/submit", payload);
       return res.data;
     },

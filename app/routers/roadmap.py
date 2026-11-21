@@ -3,6 +3,7 @@ from sqlalchemy.orm import Session
 from .. import models, schemas
 from ..database import get_db
 from ..llm_client import generate_roadmap_via_llm
+from ..rate_limit import rate_limit
 from .users import get_current_user
 
 router = APIRouter(prefix="/api/roadmap", tags=["roadmap"])
@@ -38,7 +39,12 @@ def _build_task_out(db, task, status_by_task=None):
     )
 
 
-@router.post("/generate", response_model=schemas.RoadmapOut, status_code=201)
+@router.post(
+    "/generate",
+    response_model=schemas.RoadmapOut,
+    status_code=201,
+    dependencies=[Depends(rate_limit(5, 60))],
+)
 def generate_roadmap(
     payload: schemas.RoadmapGenerateRequest,
     db: Session = Depends(get_db),

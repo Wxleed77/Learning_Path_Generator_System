@@ -216,7 +216,7 @@ export default function AccountPage() {
               value={newPw}
               onChange={(e) => setNewPw(e.target.value)}
               required
-              minLength={6}
+              minLength={8}
               className="w-full rounded-xl border border-zinc-800 bg-zinc-950/70 px-3 py-2 text-sm text-zinc-100 outline-none transition focus:border-cyan-400"
             />
           </div>
@@ -228,7 +228,7 @@ export default function AccountPage() {
               value={confirmPw}
               onChange={(e) => setConfirmPw(e.target.value)}
               required
-              minLength={6}
+              minLength={8}
               className="w-full rounded-xl border border-zinc-800 bg-zinc-950/70 px-3 py-2 text-sm text-zinc-100 outline-none transition focus:border-cyan-400"
             />
           </div>

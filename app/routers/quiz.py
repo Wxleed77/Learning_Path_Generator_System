@@ -13,6 +13,7 @@ from sqlalchemy.orm import Session
 from .. import models, schemas
 from ..database import get_db
 from ..quiz_llm_client import generate_quiz_via_llm
+from ..rate_limit import rate_limit
 from .users import get_current_user
 
 router = APIRouter(prefix="/api/quiz", tags=["quiz"])
@@ -74,7 +75,7 @@ def _get_week_context_for_quiz(db: Session, task_id: uuid.UUID, user_id) -> dict
     }
 
 
-@router.post("/{task_id}/generate")
+@router.post("/{task_id}/generate", dependencies=[Depends(rate_limit(5, 60))])
 def generate_quiz(
     task_id: str,
     db: Session = Depends(get_db),
@@ -135,7 +136,7 @@ def generate_quiz(
     }
 
 
-@router.post("/{task_id}/submit")
+@router.post("/{task_id}/submit", dependencies=[Depends(rate_limit(10, 60))])
 def submit_quiz(
     task_id: str,
     payload: dict,

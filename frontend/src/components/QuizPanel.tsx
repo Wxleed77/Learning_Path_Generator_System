@@ -35,7 +35,6 @@ export default function QuizPanel({ roadmapId, weekNumber }: QuizPanelProps) {
     const responses = questions.map((question) => ({
       questionId: question.id,
       selectedOption: selected[question.id] ?? "",
-      correctOption: question.correctOption,
     }));
 
     const result = await submitQuiz.mutateAsync({ roadmapId, weekNumber, responses });

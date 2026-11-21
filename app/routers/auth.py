@@ -3,11 +3,17 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from .. import models, schemas, auth
 from ..database import get_db
+from ..rate_limit import rate_limit
 
 router = APIRouter(prefix="/api/auth", tags=["auth"])
 
 
-@router.post("/signup", response_model=schemas.UserOut, status_code=201)
+@router.post(
+    "/signup",
+    response_model=schemas.UserOut,
+    status_code=201,
+    dependencies=[Depends(rate_limit(10, 60))],
+)
 def signup(payload: schemas.UserCreate, db: Session = Depends(get_db)):
     existing = db.query(models.User).filter(models.User.email == payload.email).first()
     if existing:
@@ -24,7 +30,11 @@ def signup(payload: schemas.UserCreate, db: Session = Depends(get_db)):
     return user
 
 
-@router.post("/login", response_model=schemas.TokenPair)
+@router.post(
+    "/login",
+    response_model=schemas.TokenPair,
+    dependencies=[Depends(rate_limit(10, 60))],
+)
 def login(payload: schemas.UserLogin, db: Session = Depends(get_db)):
     user = db.query(models.User).filter(models.User.email == payload.email).first()
     if not user or not auth.verify_password(payload.password, user.hashed_password):
@@ -39,7 +49,11 @@ def login(payload: schemas.UserLogin, db: Session = Depends(get_db)):
     return schemas.TokenPair(access_token=access_token, refresh_token=refresh_token)
 
 
-@router.post("/refresh", response_model=schemas.TokenPair)
+@router.post(
+    "/refresh",
+    response_model=schemas.TokenPair,
+    dependencies=[Depends(rate_limit(60, 60))],
+)
 def refresh(payload: schemas.RefreshRequest, db: Session = Depends(get_db)):
     stored = db.query(models.RefreshToken).filter(
         models.RefreshToken.token == payload.refresh_token

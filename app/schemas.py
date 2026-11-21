@@ -5,9 +5,9 @@ import uuid
 
 
 class UserCreate(BaseModel):
-    name: str
+    name: constr(strip_whitespace=True, min_length=1, max_length=100)
     email: EmailStr
-    password: str
+    password: constr(min_length=8, max_length=128)
 
 
 class UserLogin(BaseModel):
@@ -27,7 +27,7 @@ class UserOut(BaseModel):
 
 class UserUpdatePassword(BaseModel):
     current_password: str
-    new_password: constr(min_length=6)
+    new_password: constr(min_length=8, max_length=128)
 
 
 class UserUpdateProfile(BaseModel):
@@ -105,7 +105,6 @@ class QuizQuestionOut(BaseModel):
     id: str
     prompt: str
     options: list[str]
-    correctOption: str
     explanation: str | None = None
 
 
@@ -124,7 +123,7 @@ class QuizGenerationOut(BaseModel):
 class QuizResponseItem(BaseModel):
     questionId: str
     selectedOption: str
-    correctOption: str
+    correctOption: Optional[str] = None
 
 
 class QuizSubmissionRequest(BaseModel):
@@ -138,6 +137,16 @@ class QuizSubmissionOut(BaseModel):
     passed: bool
     rerouted: bool
     message: str
+
+
+class CommonGoalOut(BaseModel):
+    id: uuid.UUID
+    title: str
+    category: str
+    description: str | None = None
+
+    class Config:
+        from_attributes = True
 
 
 class UserRoadmapSummaryOut(BaseModel):
