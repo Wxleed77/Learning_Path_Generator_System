@@ -128,6 +128,18 @@ class CommonGoal(Base):
     sort_order = Column(Integer, default=0)
 
 
+class RoadmapTemplate(Base):
+    __tablename__ = "roadmap_templates"
+
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    goal_title = Column(String, unique=True, nullable=False, index=True)
+    skill_level = Column(String, nullable=False, default="beginner")
+    aliases = Column(JSON, nullable=True)
+    total_weeks = Column(Integer, nullable=False)
+    payload = Column(JSON, nullable=False)  # validated RoadmapLLMOutput shape
+    created_at = Column(DateTime, default=datetime.utcnow)
+
+
 class GeneratedQuizQuestion(Base):
     __tablename__ = "generated_quiz_questions"
 

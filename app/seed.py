@@ -1,5 +1,9 @@
+import json
+from pathlib import Path
+
 from .database import SessionLocal
-from .models import CommonGoal
+from .llm_schema import RoadmapLLMOutput
+from .models import CommonGoal, RoadmapTemplate
 
 # Curated starting set of popular learning goals. Seeding is idempotent:
 # rows are only inserted when a title is not already present.
@@ -20,6 +24,52 @@ COMMON_GOALS: list[tuple[str, str, str]] = [
     ("Learn SQL & Databases", "Data", "Relational modeling, queries, indexing, and performance."),
     ("Learn System Design", "Backend", "Scalable architecture, trade-offs, and distributed systems."),
 ]
+
+
+_TEMPLATE_DIR = Path(__file__).resolve().parent / "roadmap_templates"
+
+
+def seed_roadmap_templates() -> None:
+    """Load full pre-saved roadmaps from app/roadmap_templates/*.json."""
+    if not _TEMPLATE_DIR.is_dir():
+        return
+
+    db = SessionLocal()
+    try:
+        for path in sorted(_TEMPLATE_DIR.glob("*.json")):
+            try:
+                data = json.loads(path.read_text(encoding="utf-8"))
+                roadmap = RoadmapLLMOutput.model_validate(data["roadmap"]).model_dump()
+                goal_title = data["goalTitle"]
+                skill_level = data.get("skillLevel", "beginner")
+                aliases = data.get("aliases", [])
+            except Exception as exc:
+                print(f"[seed] skipping roadmap template {path.name}: {exc}")
+                continue
+
+            existing = (
+                db.query(RoadmapTemplate)
+                .filter(RoadmapTemplate.goal_title == goal_title)
+                .first()
+            )
+            if existing:
+                existing.skill_level = skill_level
+                existing.aliases = aliases
+                existing.total_weeks = roadmap["totalWeeks"]
+                existing.payload = roadmap
+            else:
+                db.add(
+                    RoadmapTemplate(
+                        goal_title=goal_title,
+                        skill_level=skill_level,
+                        aliases=aliases,
+                        total_weeks=roadmap["totalWeeks"],
+                        payload=roadmap,
+                    )
+                )
+        db.commit()
+    finally:
+        db.close()
 
 
 def seed_common_goals() -> None:

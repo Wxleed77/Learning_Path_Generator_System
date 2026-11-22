@@ -1,0 +1,340 @@
+{
+  "goalTitle": "Become a Backend Developer",
+  "skillLevel": "beginner",
+  "aliases": ["backend", "backend developer", "backend development", "become a backend developer"],
+  "roadmap": {
+    "totalWeeks": 6,
+    "weeks": [
+      {
+        "weekNumber": 1,
+        "theme": "Python and the Web Fundamentals",
+        "estimatedHours": 10,
+        "difficulty": "beginner",
+        "topics": [
+          {
+            "title": "Python syntax and data structures",
+            "description": "Variables, control flow, functions, lists, dictionaries, and modules.",
+            "estimatedHours": 3
+          },
+          {
+            "title": "How the web works",
+            "description": "DNS, HTTP requests and responses, status codes, headers, and JSON payloads.",
+            "estimatedHours": 2
+          },
+          {
+            "title": "Git and project setup",
+            "description": "Repositories, commits, branches, and isolated virtual environments.",
+            "estimatedHours": 2
+          }
+        ],
+        "resources": [
+          {
+            "title": "Python official tutorial",
+            "type": "documentation",
+            "url": "https://docs.python.org/3/tutorial/",
+            "estimatedMinutes": 120
+          },
+          {
+            "title": "MDN: An overview of HTTP",
+            "type": "article",
+            "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Overview",
+            "estimatedMinutes": 45
+          },
+          {
+            "title": "Pro Git book",
+            "type": "documentation",
+            "url": "https://git-scm.com/book/en/v2",
+            "estimatedMinutes": 90
+          }
+        ],
+        "projects": [
+          {
+            "title": "CLI expense tracker",
+            "description": "Build a small Python CLI that stores expenses in a JSON file and prints totals.",
+            "difficulty": "beginner"
+          }
+        ],
+        "quiz": {
+          "questionCount": 3,
+          "topicsCovered": ["Python basics", "HTTP", "Git"],
+          "passingScore": 70
+        },
+        "milestone": "Ship a working Python CLI and push it to GitHub."
+      },
+      {
+        "weekNumber": 2,
+        "theme": "Building APIs with FastAPI",
+        "estimatedHours": 10,
+        "difficulty": "beginner",
+        "topics": [
+          {
+            "title": "Routes and request handling",
+            "description": "Path and query parameters, request bodies, and response models.",
+            "estimatedHours": 3
+          },
+          {
+            "title": "Pydantic validation",
+            "description": "Define request and response schemas and validate incoming data.",
+            "estimatedHours": 2
+          },
+          {
+            "title": "Running and documenting the API",
+            "description": "Use Uvicorn, automatic OpenAPI docs, and interactive API testing.",
+            "estimatedHours": 2
+          }
+        ],
+        "resources": [
+          {
+            "title": "FastAPI tutorial",
+            "type": "documentation",
+            "url": "https://fastapi.tiangolo.com/tutorial/",
+            "estimatedMinutes": 150
+          },
+          {
+            "title": "Pydantic concepts",
+            "type": "documentation",
+            "url": "https://docs.pydantic.dev/latest/concepts/models/",
+            "estimatedMinutes": 60
+          }
+        ],
+        "projects": [
+          {
+            "title": "Quotes API",
+            "description": "Create a CRUD API that stores quotes in memory and validates payloads with Pydantic.",
+            "difficulty": "beginner"
+          }
+        ],
+        "quiz": {
+          "questionCount": 3,
+          "topicsCovered": ["FastAPI routing", "Pydantic", "OpenAPI"],
+          "passingScore": 70
+        },
+        "milestone": "Run a documented API locally and test every endpoint."
+      },
+      {
+        "weekNumber": 3,
+        "theme": "Databases and Persistence",
+        "estimatedHours": 10,
+        "difficulty": "beginner",
+        "topics": [
+          {
+            "title": "Relational data modeling",
+            "description": "Tables, primary keys, foreign keys, and one-to-many relationships.",
+            "estimatedHours": 3
+          },
+          {
+            "title": "SQL fundamentals",
+            "description": "SELECT, INSERT, UPDATE, DELETE, filtering, joins, and indexes.",
+            "estimatedHours": 3
+          },
+          {
+            "title": "SQLAlchemy ORM",
+            "description": "Map models to tables, manage sessions, and query with the ORM.",
+            "estimatedHours": 2
+          }
+        ],
+        "resources": [
+          {
+            "title": "PostgreSQL tutorial",
+            "type": "documentation",
+            "url": "https://www.postgresql.org/docs/current/tutorial.html",
+            "estimatedMinutes": 120
+          },
+          {
+            "title": "SQLBolt interactive lessons",
+            "type": "course",
+            "url": "https://sqlbolt.com/",
+            "estimatedMinutes": 90
+          },
+          {
+            "title": "SQLAlchemy ORM quickstart",
+            "type": "documentation",
+            "url": "https://docs.sqlalchemy.org/en/20/orm/quickstart.html",
+            "estimatedMinutes": 60
+          }
+        ],
+        "projects": [
+          {
+            "title": "Quotes API with PostgreSQL",
+            "description": "Move the quotes API from memory to PostgreSQL using SQLAlchemy models and migrations.",
+            "difficulty": "beginner"
+          }
+        ],
+        "quiz": {
+          "questionCount": 3,
+          "topicsCovered": ["Relational modeling", "SQL", "SQLAlchemy"],
+          "passingScore": 70
+        },
+        "milestone": "Persist API data in PostgreSQL and survive a server restart."
+      },
+      {
+        "weekNumber": 4,
+        "theme": "Authentication and Security",
+        "estimatedHours": 10,
+        "difficulty": "beginner",
+        "topics": [
+          {
+            "title": "Password hashing",
+            "description": "Why plaintext passwords are unsafe and how bcrypt hashing works.",
+            "estimatedHours": 2
+          },
+          {
+            "title": "JWT authentication",
+            "description": "Issue, verify, and refresh signed access tokens.",
+            "estimatedHours": 3
+          },
+          {
+            "title": "Common web vulnerabilities",
+            "description": "Injection, broken access control, and secrets management basics.",
+            "estimatedHours": 2
+          }
+        ],
+        "resources": [
+          {
+            "title": "OWASP Top 10",
+            "type": "documentation",
+            "url": "https://owasp.org/www-project-top-ten/",
+            "estimatedMinutes": 60
+          },
+          {
+            "title": "FastAPI security tutorial",
+            "type": "documentation",
+            "url": "https://fastapi.tiangolo.com/tutorial/security/",
+            "estimatedMinutes": 90
+          },
+          {
+            "title": "JWT introduction",
+            "type": "article",
+            "url": "https://jwt.io/introduction",
+            "estimatedMinutes": 30
+          }
+        ],
+        "projects": [
+          {
+            "title": "Protected notes API",
+            "description": "Add signup, login, hashed passwords, and token-protected routes to a notes API.",
+            "difficulty": "beginner"
+          }
+        ],
+        "quiz": {
+          "questionCount": 3,
+          "topicsCovered": ["Hashing", "JWT", "OWASP"],
+          "passingScore": 70
+        },
+        "milestone": "Only authenticated users can read and write their own data."
+      },
+      {
+        "weekNumber": 5,
+        "theme": "Testing, Tooling, and Containers",
+        "estimatedHours": 10,
+        "difficulty": "beginner",
+        "topics": [
+          {
+            "title": "Testing with pytest",
+            "description": "Write unit and API tests, use fixtures, and measure coverage.",
+            "estimatedHours": 3
+          },
+          {
+            "title": "Configuration and quality",
+            "description": "Environment variables, linting, formatting, and pre-commit checks.",
+            "estimatedHours": 2
+          },
+          {
+            "title": "Docker fundamentals",
+            "description": "Images, containers, Dockerfiles, and running the API in a container.",
+            "estimatedHours": 3
+          }
+        ],
+        "resources": [
+          {
+            "title": "pytest documentation",
+            "type": "documentation",
+            "url": "https://docs.pytest.org/en/stable/",
+            "estimatedMinutes": 90
+          },
+          {
+            "title": "FastAPI testing guide",
+            "type": "documentation",
+            "url": "https://fastapi.tiangolo.com/tutorial/testing/",
+            "estimatedMinutes": 45
+          },
+          {
+            "title": "Docker get started",
+            "type": "documentation",
+            "url": "https://docs.docker.com/get-started/",
+            "estimatedMinutes": 90
+          }
+        ],
+        "projects": [
+          {
+            "title": "Tested and containerized API",
+            "description": "Add pytest coverage and a Dockerfile that runs the API with environment variables.",
+            "difficulty": "beginner"
+          }
+        ],
+        "quiz": {
+          "questionCount": 3,
+          "topicsCovered": ["pytest", "Configuration", "Docker"],
+          "passingScore": 70
+        },
+        "milestone": "Run the API from a container with all tests passing."
+      },
+      {
+        "weekNumber": 6,
+        "theme": "Deployment and Capstone",
+        "estimatedHours": 10,
+        "difficulty": "beginner",
+        "topics": [
+          {
+            "title": "Deploying a backend service",
+            "description": "Build commands, start commands, environment variables, and health checks.",
+            "estimatedHours": 3
+          },
+          {
+            "title": "Logging and monitoring",
+            "description": "Structured logs, error tracking, and uptime checks for a live service.",
+            "estimatedHours": 2
+          },
+          {
+            "title": "API design review",
+            "description": "Consistent naming, pagination, error responses, and versioning.",
+            "estimatedHours": 2
+          }
+        ],
+        "resources": [
+          {
+            "title": "Render deployment docs",
+            "type": "documentation",
+            "url": "https://render.com/docs/deploy-fastapi",
+            "estimatedMinutes": 60
+          },
+          {
+            "title": "The Twelve-Factor App",
+            "type": "article",
+            "url": "https://12factor.net/",
+            "estimatedMinutes": 45
+          },
+          {
+            "title": "FastAPI deployment guide",
+            "type": "documentation",
+            "url": "https://fastapi.tiangolo.com/deployment/",
+            "estimatedMinutes": 45
+          }
+        ],
+        "projects": [
+          {
+            "title": "Capstone: task manager API",
+            "description": "Build and deploy a full task manager API with auth, PostgreSQL, tests, and a README.",
+            "difficulty": "beginner"
+          }
+        ],
+        "quiz": {
+          "questionCount": 3,
+          "topicsCovered": ["Deployment", "Monitoring", "API design"],
+          "passingScore": 70
+        },
+        "milestone": "Ship a live, documented API and add it to your portfolio."
+      }
+    ]
+  }
+}

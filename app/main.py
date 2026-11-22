@@ -5,13 +5,14 @@ from sqlalchemy import text
 from dotenv import load_dotenv
 from .database import Base, engine
 from .routers import auth, users, roadmap, progress, quizzes, quiz, goals
-from .seed import seed_common_goals
+from .seed import seed_common_goals, seed_roadmap_templates
 
 load_dotenv()
 
 # Create any missing tables. Never drop existing data here.
 Base.metadata.create_all(bind=engine)
 seed_common_goals()
+seed_roadmap_templates()
 
 app = FastAPI(title="Learning Path Generator API")
 

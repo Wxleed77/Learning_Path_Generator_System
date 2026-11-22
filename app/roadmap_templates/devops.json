@@ -1,0 +1,346 @@
+{
+  "goalTitle": "Learn DevOps",
+  "skillLevel": "beginner",
+  "aliases": ["devops", "dev ops", "learn devops", "devops engineer", "devops engineering"],
+  "roadmap": {
+    "totalWeeks": 6,
+    "weeks": [
+      {
+        "weekNumber": 1,
+        "theme": "Linux and Networking Basics",
+        "estimatedHours": 10,
+        "difficulty": "beginner",
+        "topics": [
+          {
+            "title": "The Linux command line",
+            "description": "Files, permissions, processes, packages, and shell scripting basics.",
+            "estimatedHours": 3
+          },
+          {
+            "title": "Networking fundamentals",
+            "description": "IP addressing, DNS, ports, TCP vs UDP, and troubleshooting with curl and dig.",
+            "estimatedHours": 3
+          },
+          {
+            "title": "SSH and remote servers",
+            "description": "Keys, SSH config, copying files, and running commands on a remote host.",
+            "estimatedHours": 2
+          }
+        ],
+        "resources": [
+          {
+            "title": "Linux Journey",
+            "type": "course",
+            "url": "https://linuxjourney.com/",
+            "estimatedMinutes": 120
+          },
+          {
+            "title": "MDN: How the web works",
+            "type": "article",
+            "url": "https://developer.mozilla.org/en-US/docs/Learn/Common_questions/Web_mechanics/How_does_the_Internet_work",
+            "estimatedMinutes": 45
+          },
+          {
+            "title": "SSH Academy",
+            "type": "course",
+            "url": "https://www.ssh.com/academy/ssh",
+            "estimatedMinutes": 60
+          }
+        ],
+        "projects": [
+          {
+            "title": "Provision a Linux VM",
+            "description": "Create a cloud VM, connect over SSH, install a web server, and serve a static page.",
+            "difficulty": "beginner"
+          }
+        ],
+        "quiz": {
+          "questionCount": 3,
+          "topicsCovered": ["Linux CLI", "Networking", "SSH"],
+          "passingScore": 70
+        },
+        "milestone": "Serve a page from a remote Linux server you configured yourself."
+      },
+      {
+        "weekNumber": 2,
+        "theme": "Git Workflows and CI/CD",
+        "estimatedHours": 10,
+        "difficulty": "beginner",
+        "topics": [
+          {
+            "title": "Branching and collaboration",
+            "description": "Feature branches, pull requests, merge vs rebase, and conflict resolution.",
+            "estimatedHours": 2
+          },
+          {
+            "title": "GitHub Actions",
+            "description": "Workflows, jobs, steps, triggers, secrets, and caching dependencies.",
+            "estimatedHours": 4
+          },
+          {
+            "title": "Continuous delivery concepts",
+            "description": "Build, test, and deploy stages with safe rollbacks.",
+            "estimatedHours": 2
+          }
+        ],
+        "resources": [
+          {
+            "title": "GitHub Actions quickstart",
+            "type": "documentation",
+            "url": "https://docs.github.com/en/actions/quickstart",
+            "estimatedMinutes": 60
+          },
+          {
+            "title": "GitHub Skills: Hello GitHub Actions",
+            "type": "course",
+            "url": "https://skills.github.com/",
+            "estimatedMinutes": 90
+          },
+          {
+            "title": "Pro Git: Branching",
+            "type": "documentation",
+            "url": "https://git-scm.com/book/en/v2/Git-Branching-Branches-in-a-Nutshell",
+            "estimatedMinutes": 45
+          }
+        ],
+        "projects": [
+          {
+            "title": "CI pipeline for a small app",
+            "description": "Add a GitHub Actions workflow that installs, lints, tests, and builds on every push.",
+            "difficulty": "beginner"
+          }
+        ],
+        "quiz": {
+          "questionCount": 3,
+          "topicsCovered": ["Git branching", "GitHub Actions", "CI/CD"],
+          "passingScore": 70
+        },
+        "milestone": "Every push runs an automated test and build pipeline."
+      },
+      {
+        "weekNumber": 3,
+        "theme": "Containers with Docker",
+        "estimatedHours": 10,
+        "difficulty": "beginner",
+        "topics": [
+          {
+            "title": "Images and containers",
+            "description": "Build images, run containers, map ports, and manage data with volumes.",
+            "estimatedHours": 3
+          },
+          {
+            "title": "Writing Dockerfiles",
+            "description": "Layer caching, multi-stage builds, and small production images.",
+            "estimatedHours": 3
+          },
+          {
+            "title": "Compose for multi-service apps",
+            "description": "Define services, networks, and environment configuration in compose.",
+            "estimatedHours": 2
+          }
+        ],
+        "resources": [
+          {
+            "title": "Docker get started",
+            "type": "documentation",
+            "url": "https://docs.docker.com/get-started/",
+            "estimatedMinutes": 120
+          },
+          {
+            "title": "Docker Compose overview",
+            "type": "documentation",
+            "url": "https://docs.docker.com/compose/",
+            "estimatedMinutes": 60
+          },
+          {
+            "title": "Best practices for Dockerfiles",
+            "type": "article",
+            "url": "https://docs.docker.com/develop/develop-images/dockerfile_best-practices/",
+            "estimatedMinutes": 45
+          }
+        ],
+        "projects": [
+          {
+            "title": "Containerized app stack",
+            "description": "Package an API and database with Docker Compose and run the whole stack locally.",
+            "difficulty": "beginner"
+          }
+        ],
+        "quiz": {
+          "questionCount": 3,
+          "topicsCovered": ["Docker images", "Dockerfiles", "Compose"],
+          "passingScore": 70
+        },
+        "milestone": "Run a reproducible multi-service stack with one command."
+      },
+      {
+        "weekNumber": 4,
+        "theme": "Kubernetes Fundamentals",
+        "estimatedHours": 10,
+        "difficulty": "beginner",
+        "topics": [
+          {
+            "title": "Pods, services, and deployments",
+            "description": "Run workloads, expose them, and manage replicas.",
+            "estimatedHours": 4
+          },
+          {
+            "title": "Configuration and secrets",
+            "description": "ConfigMaps, Secrets, and environment configuration for workloads.",
+            "estimatedHours": 2
+          },
+          {
+            "title": "Ingress and scaling",
+            "description": "Route traffic, set resource limits, and scale with the horizontal pod autoscaler.",
+            "estimatedHours": 2
+          }
+        ],
+        "resources": [
+          {
+            "title": "Kubernetes basics tutorial",
+            "type": "documentation",
+            "url": "https://kubernetes.io/docs/tutorials/kubernetes-basics/",
+            "estimatedMinutes": 120
+          },
+          {
+            "title": "Kubernetes concepts",
+            "type": "documentation",
+            "url": "https://kubernetes.io/docs/concepts/",
+            "estimatedMinutes": 90
+          },
+          {
+            "title": "minikube tutorial",
+            "type": "documentation",
+            "url": "https://minikube.sigs.k8s.io/docs/start/",
+            "estimatedMinutes": 45
+          }
+        ],
+        "projects": [
+          {
+            "title": "Deploy the stack to Kubernetes",
+            "description": "Deploy a containerized app to a local cluster with a service, ingress, and config.",
+            "difficulty": "beginner"
+          }
+        ],
+        "quiz": {
+          "questionCount": 3,
+          "topicsCovered": ["Pods/Services", "ConfigMaps", "Ingress"],
+          "passingScore": 70
+        },
+        "milestone": "A workload running on a local Kubernetes cluster with external access."
+      },
+      {
+        "weekNumber": 5,
+        "theme": "Cloud and Infrastructure as Code",
+        "estimatedHours": 10,
+        "difficulty": "beginner",
+        "topics": [
+          {
+            "title": "Cloud fundamentals",
+            "description": "Compute, storage, networking, IAM, and the shared responsibility model.",
+            "estimatedHours": 3
+          },
+          {
+            "title": "Terraform basics",
+            "description": "Providers, resources, variables, state, and plan/apply workflows.",
+            "estimatedHours": 4
+          },
+          {
+            "title": "Secrets and environments",
+            "description": "Separate dev and prod configuration and keep credentials out of code.",
+            "estimatedHours": 1
+          }
+        ],
+        "resources": [
+          {
+            "title": "AWS Cloud Practitioner essentials",
+            "type": "course",
+            "url": "https://aws.amazon.com/training/digital/aws-cloud-practitioner-essentials/",
+            "estimatedMinutes": 120
+          },
+          {
+            "title": "Terraform getting started",
+            "type": "documentation",
+            "url": "https://developer.hashicorp.com/terraform/tutorials/aws-get-started",
+            "estimatedMinutes": 120
+          },
+          {
+            "title": "Terraform language docs",
+            "type": "documentation",
+            "url": "https://developer.hashicorp.com/terraform/language",
+            "estimatedMinutes": 60
+          }
+        ],
+        "projects": [
+          {
+            "title": "Infrastructure as code",
+            "description": "Use Terraform to provision a VM and network, then tear it down cleanly.",
+            "difficulty": "beginner"
+          }
+        ],
+        "quiz": {
+          "questionCount": 3,
+          "topicsCovered": ["Cloud basics", "Terraform", "Secrets"],
+          "passingScore": 70
+        },
+        "milestone": "Provision and destroy cloud infrastructure entirely from code."
+      },
+      {
+        "weekNumber": 6,
+        "theme": "Observability and Capstone",
+        "estimatedHours": 10,
+        "difficulty": "beginner",
+        "topics": [
+          {
+            "title": "Logs, metrics, and traces",
+            "description": "Structured logging, metrics collection, and distributed tracing basics.",
+            "estimatedHours": 3
+          },
+          {
+            "title": "Monitoring and alerting",
+            "description": "Dashboards, SLOs, and alerts that catch real problems.",
+            "estimatedHours": 3
+          },
+          {
+            "title": "Incident response basics",
+            "description": "Runbooks, rollbacks, and post-incident reviews.",
+            "estimatedHours": 2
+          }
+        ],
+        "resources": [
+          {
+            "title": "Prometheus getting started",
+            "type": "documentation",
+            "url": "https://prometheus.io/docs/introduction/first_steps/",
+            "estimatedMinutes": 75
+          },
+          {
+            "title": "Grafana fundamentals",
+            "type": "documentation",
+            "url": "https://grafana.com/tutorials/grafana-fundamentals/",
+            "estimatedMinutes": 60
+          },
+          {
+            "title": "Google SRE book",
+            "type": "documentation",
+            "url": "https://sre.google/sre-book/table-of-contents/",
+            "estimatedMinutes": 60
+          }
+        ],
+        "projects": [
+          {
+            "title": "Capstone: end-to-end pipeline",
+            "description": "Build a CI/CD pipeline that tests, builds, deploys, and monitors a containerized app.",
+            "difficulty": "beginner"
+          }
+        ],
+        "quiz": {
+          "questionCount": 3,
+          "topicsCovered": ["Observability", "Alerting", "Incident response"],
+          "passingScore": 70
+        },
+        "milestone": "A deployed app with CI/CD, dashboards, and alerts you can explain."
+      }
+    ]
+  }
+}

@@ -1,3 +1,5 @@
+import copy
+
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 from .. import models, schemas
@@ -7,6 +9,38 @@ from ..rate_limit import rate_limit
 from .users import get_current_user
 
 router = APIRouter(prefix="/api/roadmap", tags=["roadmap"])
+
+
+def _normalize_goal(value: str) -> str:
+    return " ".join(value.strip().lower().split())
+
+
+def _find_preset(db: Session, goal_title: str, skill_level: str):
+    """Return a saved roadmap template when the goal matches one (beginner only)."""
+    if skill_level != "beginner":
+        return None
+
+    normalized = _normalize_goal(goal_title)
+    templates = (
+        db.query(models.RoadmapTemplate)
+        .filter(models.RoadmapTemplate.skill_level == "beginner")
+        .all()
+    )
+    for template in templates:
+        candidates = {_normalize_goal(template.goal_title)}
+        for alias in template.aliases or []:
+            if isinstance(alias, str):
+                candidates.add(_normalize_goal(alias))
+        if normalized in candidates:
+            return template
+    return None
+
+
+def _scale_weekly_hours(payload: dict, hours_per_week: int) -> dict:
+    roadmap = copy.deepcopy(payload)
+    for week in roadmap.get("weeks", []):
+        week["estimatedHours"] = hours_per_week
+    return roadmap
 
 
 def _persist_task_with_resources(db, weekly_plan_id, type_, title, description, difficulty, order_index, resources=None):
@@ -63,11 +97,15 @@ def generate_roadmap(
     db.add(plan)
     db.flush()
 
-    try:
-        roadmap = generate_roadmap_via_llm(payload.goalTitle, payload.skillLevel, payload.hoursPerWeek)
-    except RuntimeError as e:
-        db.rollback()
-        raise HTTPException(status_code=502, detail=str(e))
+    preset = _find_preset(db, payload.goalTitle, payload.skillLevel)
+    if preset:
+        roadmap = _scale_weekly_hours(preset.payload, payload.hoursPerWeek)
+    else:
+        try:
+            roadmap = generate_roadmap_via_llm(payload.goalTitle, payload.skillLevel, payload.hoursPerWeek)
+        except RuntimeError as e:
+            db.rollback()
+            raise HTTPException(status_code=502, detail=str(e))
 
     version = models.RoadmapVersion(
         plan_id=plan.id,

@@ -1,0 +1,328 @@
+{
+  "goalTitle": "Become a Frontend Developer",
+  "skillLevel": "beginner",
+  "aliases": ["frontend", "front-end", "frontend developer", "frontend development", "become a frontend developer"],
+  "roadmap": {
+    "totalWeeks": 6,
+    "weeks": [
+      {
+        "weekNumber": 1,
+        "theme": "HTML and CSS Foundations",
+        "estimatedHours": 10,
+        "difficulty": "beginner",
+        "topics": [
+          {
+            "title": "Semantic HTML",
+            "description": "Document structure, headings, forms, images, and accessible markup.",
+            "estimatedHours": 3
+          },
+          {
+            "title": "CSS layout",
+            "description": "The box model, flexbox, grid, spacing, and responsive units.",
+            "estimatedHours": 3
+          },
+          {
+            "title": "Responsive design",
+            "description": "Mobile-first layouts, media queries, and fluid typography.",
+            "estimatedHours": 2
+          }
+        ],
+        "resources": [
+          {
+            "title": "MDN: HTML basics",
+            "type": "documentation",
+            "url": "https://developer.mozilla.org/en-US/docs/Learn/Getting_started_with_the_web/HTML_basics",
+            "estimatedMinutes": 90
+          },
+          {
+            "title": "CSS-Tricks: A complete guide to flexbox",
+            "type": "article",
+            "url": "https://css-tricks.com/snippets/css/a-guide-to-flexbox/",
+            "estimatedMinutes": 60
+          },
+          {
+            "title": "web.dev: Responsive design",
+            "type": "article",
+            "url": "https://web.dev/learn/design/",
+            "estimatedMinutes": 75
+          }
+        ],
+        "projects": [
+          {
+            "title": "Personal profile page",
+            "description": "Build a responsive one-page profile with semantic HTML and a flexbox or grid layout.",
+            "difficulty": "beginner"
+          }
+        ],
+        "quiz": {
+          "questionCount": 3,
+          "topicsCovered": ["Semantic HTML", "Flexbox/Grid", "Responsive design"],
+          "passingScore": 70
+        },
+        "milestone": "A responsive profile page that works on mobile and desktop."
+      },
+      {
+        "weekNumber": 2,
+        "theme": "JavaScript Essentials",
+        "estimatedHours": 10,
+        "difficulty": "beginner",
+        "topics": [
+          {
+            "title": "Language fundamentals",
+            "description": "Variables, functions, arrays, objects, and modern ES syntax.",
+            "estimatedHours": 3
+          },
+          {
+            "title": "DOM and events",
+            "description": "Select elements, handle clicks and input, and update the page.",
+            "estimatedHours": 3
+          },
+          {
+            "title": "Async and fetch",
+            "description": "Promises, async/await, and calling a JSON API from the browser.",
+            "estimatedHours": 3
+          }
+        ],
+        "resources": [
+          {
+            "title": "MDN: JavaScript first steps",
+            "type": "documentation",
+            "url": "https://developer.mozilla.org/en-US/docs/Learn/JavaScript/First_steps",
+            "estimatedMinutes": 120
+          },
+          {
+            "title": "javascript.info",
+            "type": "course",
+            "url": "https://javascript.info/",
+            "estimatedMinutes": 120
+          },
+          {
+            "title": "MDN: Using fetch",
+            "type": "documentation",
+            "url": "https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API/Using_Fetch",
+            "estimatedMinutes": 45
+          }
+        ],
+        "projects": [
+          {
+            "title": "Weather dashboard",
+            "description": "Fetch weather data from a public API and render current conditions and a short forecast.",
+            "difficulty": "beginner"
+          }
+        ],
+        "quiz": {
+          "questionCount": 3,
+          "topicsCovered": ["JavaScript syntax", "DOM events", "fetch/async"],
+          "passingScore": 70
+        },
+        "milestone": "A working app that fetches and displays live API data."
+      },
+      {
+        "weekNumber": 3,
+        "theme": "React Fundamentals",
+        "estimatedHours": 10,
+        "difficulty": "beginner",
+        "topics": [
+          {
+            "title": "Components and JSX",
+            "description": "Break a UI into components, pass props, and render lists.",
+            "estimatedHours": 3
+          },
+          {
+            "title": "State and events",
+            "description": "useState, controlled inputs, and lifting state up.",
+            "estimatedHours": 3
+          },
+          {
+            "title": "Effects and lifecycle",
+            "description": "useEffect for side effects, data loading, and cleanup.",
+            "estimatedHours": 3
+          }
+        ],
+        "resources": [
+          {
+            "title": "React: Quick start",
+            "type": "documentation",
+            "url": "https://react.dev/learn",
+            "estimatedMinutes": 150
+          },
+          {
+            "title": "React: Managing state",
+            "type": "documentation",
+            "url": "https://react.dev/learn/managing-state",
+            "estimatedMinutes": 90
+          }
+        ],
+        "projects": [
+          {
+            "title": "Task list app",
+            "description": "Build a React task list with add, complete, filter, and delete using state.",
+            "difficulty": "beginner"
+          }
+        ],
+        "quiz": {
+          "questionCount": 3,
+          "topicsCovered": ["JSX", "State", "Effects"],
+          "passingScore": 70
+        },
+        "milestone": "A React app with multiple components and interactive state."
+      },
+      {
+        "weekNumber": 4,
+        "theme": "Data Fetching and Routing",
+        "estimatedHours": 10,
+        "difficulty": "beginner",
+        "topics": [
+          {
+            "title": "Client-side routing",
+            "description": "Routes, links, params, and nested layouts with React Router.",
+            "estimatedHours": 3
+          },
+          {
+            "title": "Server state with TanStack Query",
+            "description": "Queries, mutations, caching, and loading/error states.",
+            "estimatedHours": 3
+          },
+          {
+            "title": "Forms and validation",
+            "description": "Controlled forms, validation feedback, and submitting to an API.",
+            "estimatedHours": 2
+          }
+        ],
+        "resources": [
+          {
+            "title": "React Router tutorial",
+            "type": "documentation",
+            "url": "https://reactrouter.com/en/main/start/tutorial",
+            "estimatedMinutes": 90
+          },
+          {
+            "title": "TanStack Query quick start",
+            "type": "documentation",
+            "url": "https://tanstack.com/query/latest/docs/framework/react/quick-start",
+            "estimatedMinutes": 75
+          }
+        ],
+        "projects": [
+          {
+            "title": "Multi-page notes app",
+            "description": "Add routing, data fetching, and create/edit forms to the task app.",
+            "difficulty": "beginner"
+          }
+        ],
+        "quiz": {
+          "questionCount": 3,
+          "topicsCovered": ["React Router", "TanStack Query", "Forms"],
+          "passingScore": 70
+        },
+        "milestone": "A multi-page app that loads and mutates server data cleanly."
+      },
+      {
+        "weekNumber": 5,
+        "theme": "Styling, Accessibility, and Performance",
+        "estimatedHours": 10,
+        "difficulty": "beginner",
+        "topics": [
+          {
+            "title": "Utility-first styling",
+            "description": "Compose layouts and components with Tailwind CSS.",
+            "estimatedHours": 3
+          },
+          {
+            "title": "Accessible interfaces",
+            "description": "Semantic roles, keyboard navigation, focus states, and color contrast.",
+            "estimatedHours": 3
+          },
+          {
+            "title": "Frontend performance basics",
+            "description": "Bundle size, image optimization, lazy loading, and Core Web Vitals.",
+            "estimatedHours": 2
+          }
+        ],
+        "resources": [
+          {
+            "title": "Tailwind CSS documentation",
+            "type": "documentation",
+            "url": "https://tailwindcss.com/docs/utility-first",
+            "estimatedMinutes": 90
+          },
+          {
+            "title": "MDN: Accessibility",
+            "type": "documentation",
+            "url": "https://developer.mozilla.org/en-US/docs/Web/Accessibility",
+            "estimatedMinutes": 75
+          },
+          {
+            "title": "web.dev: Core Web Vitals",
+            "type": "article",
+            "url": "https://web.dev/articles/vitals",
+            "estimatedMinutes": 45
+          }
+        ],
+        "projects": [
+          {
+            "title": "Accessible design system",
+            "description": "Build reusable buttons, inputs, and cards with Tailwind and keyboard support.",
+            "difficulty": "beginner"
+          }
+        ],
+        "quiz": {
+          "questionCount": 3,
+          "topicsCovered": ["Tailwind", "Accessibility", "Performance"],
+          "passingScore": 70
+        },
+        "milestone": "A polished, keyboard-accessible UI with a consistent design system."
+      },
+      {
+        "weekNumber": 6,
+        "theme": "Build, Deploy, and Capstone",
+        "estimatedHours": 10,
+        "difficulty": "beginner",
+        "topics": [
+          {
+            "title": "Production builds",
+            "description": "Type checking, Vite builds, environment variables, and bundle inspection.",
+            "estimatedHours": 3
+          },
+          {
+            "title": "Deploying a SPA",
+            "description": "Static hosting, SPA rewrites, custom domains, and environment config.",
+            "estimatedHours": 2
+          },
+          {
+            "title": "Portfolio review",
+            "description": "README, screenshots, live demo, and explaining design decisions.",
+            "estimatedHours": 2
+          }
+        ],
+        "resources": [
+          {
+            "title": "Vite: Building for production",
+            "type": "documentation",
+            "url": "https://vitejs.dev/guide/build.html",
+            "estimatedMinutes": 45
+          },
+          {
+            "title": "Vercel deployment docs",
+            "type": "documentation",
+            "url": "https://vercel.com/docs/deployments/overview",
+            "estimatedMinutes": 60
+          }
+        ],
+        "projects": [
+          {
+            "title": "Capstone: full frontend app",
+            "description": "Build and deploy a complete app with auth, routing, data fetching, and a polished UI.",
+            "difficulty": "beginner"
+          }
+        ],
+        "quiz": {
+          "questionCount": 3,
+          "topicsCovered": ["Production builds", "Deployment", "Portfolio"],
+          "passingScore": 70
+        },
+        "milestone": "Ship a live frontend app with a strong README and demo link."
+      }
+    ]
+  }
+}
